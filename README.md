@@ -90,64 +90,82 @@ Then you can update the config file as below.
 <?php
 
 return array(
-
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application Public Key
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application public key.
-  |
-  */
-
-  'public_key' => getEnv('CUB_PUBLIC'), // set to you application's public key
-
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application Secret Key
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application secret key.
-  |
-  */
-
-  'secret_key' => getEnv('CUB_SECRET'), // you should keep this as an environment variable
-
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application API Url
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application api url.
-  |
-  */
-
-  'api_url' => getEnv('CUB_API_URL'), // set to your application's api url
-
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application Webhook Url
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application webhook url.
-  |
-  */
-
-  'webhook_url' => getEnv('CUB_WEBHOOK_URL'), // set this to your application's webhook url
-
-  /*
-  |--------------------------------------------------------------------------
-  | Application User Model
-  |--------------------------------------------------------------------------
-  |
-  | This is the user model which will be returned.
-  |
-  */
-
-  'user' => 'App\User', // update to the fully qualified namespace of your user model
-
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application Public Key
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application public key.
+    |
+    */
+    
+    'public_key' => getEnv('CUB_PUBLIC'), // set to you application's public key
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application Secret Key
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application secret key.
+    |
+    */
+    
+    'secret_key' => getEnv('CUB_SECRET'), // you should keep this as an environment variable
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application API Url
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application api url.
+    |
+    */
+    
+    'api_url' => getEnv('CUB_API_URL'), // set to your application's api url
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application Webhook Url
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application webhook url.
+    |
+    */
+    
+    'webhook_url' => getEnv('CUB_WEBHOOK_URL'), // set this to your application's webhook url
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Application User Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the user model which will be returned.
+    |
+    */
+    
+    'user' => 'App\User', // update to the fully qualified namespace of your user model
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Application User Model Fields Map
+    |--------------------------------------------------------------------------
+    |
+    | This is where the mapping of the Cub User keys can
+    | be mapped to the fields on your User model.
+    |
+    */
+    
+    // update the values of this array with the corresponding
+    // fields on your User model
+    // i.e. 'email' => 'user_email'
+    'fields' => [
+        'first_name' => 'first_name',
+        'last_name' => 'last_name',
+        'email' => 'email',
+    ],
+    
 );
-
 ```
 
 

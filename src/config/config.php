@@ -2,59 +2,76 @@
 
 return array(
 
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application Public Key
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application public key.
-  |
-  */
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application Public Key
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application public key.
+    |
+    */
 
-  'public_key' => getEnv('CUB_PUBLIC'),
+    'public_key' => getEnv('CUB_PUBLIC'),
 
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application Secret Key
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application secret key.
-  |
-  */
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application Secret Key
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application secret key.
+    |
+    */
 
-  'secret_key' => getEnv('CUB_SECRET'),
+    'secret_key' => getEnv('CUB_SECRET'),
 
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application API Url
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application api url.
-  |
-  */
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application API Url
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application api url.
+    |
+    */
 
-  'api_url' => getEnv('CUB_API_URL'),
+    'api_url' => getEnv('CUB_API_URL'),
 
-  /*
-  |--------------------------------------------------------------------------
-  | Cub Application Webhook Url
-  |--------------------------------------------------------------------------
-  |
-  | This is the Cub application webhook url.
-  |
-  */
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application Webhook Url
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application webhook url.
+    |
+    */
 
-  'webhook_url' => getEnv('CUB_WEBHOOK_URL'),
+    'webhook_url' => getEnv('CUB_WEBHOOK_URL'),
 
-  /*
-  |--------------------------------------------------------------------------
-  | Application User Model
-  |--------------------------------------------------------------------------
-  |
-  | This is the user model which will be returned.
-  |
-  */
+    /*
+    |--------------------------------------------------------------------------
+    | Application User Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the user model which will be returned.
+    |
+    */
 
-  'user' => 'App\User',
+    'user' => 'App\User',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application User Model Fields Map
+    |--------------------------------------------------------------------------
+    |
+    | This is where the mapping of the Cub User keys can
+    | be mapped to the fields on your User model.
+    |
+    */
+
+    'fields' => [
+        'first_name' => 'first_name',
+        'last_name' => 'last_name',
+        'email' => 'email',
+        // more will come later as necessary
+    ],
 
 );

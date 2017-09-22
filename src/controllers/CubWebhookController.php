@@ -2,7 +2,7 @@
 
 use Cub_Object;
 use Cub_User;
-use Praetoriandigital\CubLaravel\Cub;
+use Cub;
 
 class CubWebhookController
 {
@@ -20,8 +20,14 @@ class CubWebhookController
                 if ($object->deleted) {
                     $user->delete();
                 } else {
-                    $user->email = $object->email;
-                    $user->save();
+                    $fields = Config::get('cub.fields');
+                    $updates = [];
+                    foreach ($fields as $cub => $local) {
+                        $updates[$local] = $user->get($cub);
+                    }
+                    if (count($updates)) {
+                        $user->update($updates);
+                    }
                 }
             }
         }
