@@ -30,7 +30,7 @@ Next make sure to add the Cub alias in the `aliases` array in the same `config/a
 
 ## Usage
 
-####Logging in
+#### Logging in
 Just pass the user's username and password to the Cub facade. You'll get a Login object that you use to access the User and the Cub token.
 ``` php
 $login = Cub::login($username, $password);
@@ -43,20 +43,20 @@ $user = $login->getUser();
 $token = $login->getToken();
 ```
 
-####Getting a user by `cub_id`
+#### Getting a user by `cub_id`
 For convenience, you have the ability to get an instance of your application's User model when you possess a `cub_id`.
  ```php
  // an instance of your application's User model
  $user = Cub::getUserByCubId($cubId);
  ```
  
- ####Getting a user by JWT
+ #### Getting a user by JWT
  This is coming soon.
  ```php
  Get excited!
  ```
  
- ####Route filtering for JWT
+ #### Route filtering for JWT
  This is also coming soon.
  ```php
  I know I'm excited!
