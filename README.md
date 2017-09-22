@@ -4,11 +4,16 @@ Laravel wrapper for [ivelum/cub-php][link-cub-php].
 
 Use for authenticating your users with Cub. Keep your user data up-to-date with what is happening in Cub.
 
+* [Compatibility](#compatibility)
+* [Installation](#installation)
+* [Usage](#usage)
+* [Configuration](#configuration)
+
 ## Compatibility
 
 Currently only compatible with Laravel 4.2.*
 
-## Install
+## Installation
 
 Via Composer
 

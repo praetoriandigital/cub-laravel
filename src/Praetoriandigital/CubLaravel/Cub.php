@@ -2,7 +2,6 @@
 
 use Config;
 use Cub_User;
-use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -167,5 +166,10 @@ class Cub
     public function deleteUser(Model $appUser)
     {
         $appUser->delete();
+    }
+
+    public function getWidget()
+    {
+        return '<script>'.Config::get('cub.public_key').'</script>';
     }
 }
