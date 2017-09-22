@@ -1,7 +1,6 @@
 <?php namespace Praetoriandigital\CubLaravel\Test;
 
 use DB;
-use Cub_Config;
 use Orchestra\Testbench\TestCase;
 
 /**
@@ -17,7 +16,6 @@ abstract class CubLaravelTestCase extends TestCase
         parent::setUp();
 
         $this->app['path.base'] = __DIR__ . '/../src';
-        $artisan = $this->app->make('artisan');
 
         $this->details = [
             'original_username' => 'ivelum',
@@ -30,18 +28,8 @@ abstract class CubLaravelTestCase extends TestCase
             'password' => 'SJW8Gg',
         ];
 
-        $artisan->call('migrate', [
-            '--database' => 'testbench',
-            '--path'     => '../tests/migrations',
-        ]);
-
-        $artisan->call('migrate', [
-            '--database' => 'testbench',
-            '--path'     => '/migrations',
-        ]);
-
-        // Update our user to have a correct cub_id
-        DB::table('users')->where('id', 1)->update(['cub_id' => $this->details['id']]);
+        $this->prepareDatabase();
+        $this->prepareRoutes();
     }
 
     /**
@@ -89,5 +77,38 @@ abstract class CubLaravelTestCase extends TestCase
             'email' => 'email',
             'username' => 'username',
         ]);
+    }
+
+    /**
+     * Migrate the database and update seeded data.
+     */
+    protected function prepareDatabase()
+    {
+        $artisan = $this->app->make('artisan');
+
+        $artisan->call('migrate', [
+            '--database' => 'testbench',
+            '--path'     => '../tests/migrations',
+        ]);
+
+        $artisan->call('migrate', [
+            '--database' => 'testbench',
+            '--path'     => '/migrations',
+        ]);
+
+        // Update our user to have a correct cub_id
+        DB::table('users')->where('id', 1)->update(['cub_id' => $this->details['id']]);
+    }
+
+    /**
+     * Prepare routes.
+     */
+    protected function prepareRoutes()
+    {
+        $this->app['router']->get('restricted', ['before' => 'cub-auth', function () {
+            return json_encode(['message' => 'Right on!']);
+        }]);
+
+        $this->app['router']->enableFilters();
     }
 }

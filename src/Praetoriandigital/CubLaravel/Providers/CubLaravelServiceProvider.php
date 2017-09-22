@@ -4,6 +4,7 @@ use Illuminate\Support\ServiceProvider;
 use Config;
 use Cub_Config;
 use Praetoriandigital\CubLaravel\Cub;
+use Praetoriandigital\CubLaravel\CubAuthFilter;
 
 class CubLaravelServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,9 @@ class CubLaravelServiceProvider extends ServiceProvider
         $this->package('praetoriandigital/cub-laravel', 'cub');
 
         $this->bootBindings();
+
+        // register the filter
+        $this->app['router']->filter('cub-auth', 'pd.cub.auth-filter');
 
         include __DIR__.'/../../../routes.php';
 
@@ -52,9 +56,10 @@ class CubLaravelServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerUserProvider();
+        $this->registerCubAuthFilter();
 
         $this->app->bind('cub', function ($app) {
-            return new Cub($app->make(Config::get('cub.user')));
+            return new Cub($app->make(Config::get('cub.user')), $app['request']);
         });
     }
 
@@ -67,6 +72,16 @@ class CubLaravelServiceProvider extends ServiceProvider
             $provider = 'Praetoriandigital\CubLaravel\Providers\User\EloquentUserAdapter';
             $model = $app->make(Config::get('cub.user'));
             return new $provider($model);
+        });
+    }
+
+    /**
+     * Register the bindings for the 'cub-auth' filter
+     */
+    protected function registerCubAuthFilter()
+    {
+        $this->app->singleton('pd.cub.auth-filter', function ($app) {
+            return new CubAuthFilter($app->make('cub'));
         });
     }
 

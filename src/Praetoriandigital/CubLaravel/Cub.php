@@ -2,8 +2,11 @@
 
 use Config;
 use Cub_User;
+use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Praetoriandigital\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 
 class Cub
@@ -12,13 +15,25 @@ class Cub
     const CUB_ID_KEY = 'cub_id';
 
     /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $user;
+
+    /**
+     * @var \Illuminate\Http\Request
+     */
+    protected $request;
+
+    /**
      * Cub constructor.
      *
      * @param \Illuminate\Database\Eloquent\Model $user
+     * @param \Illuminate\Http\Request $request
      */
-    public function __construct(Model $user)
+    public function __construct(Model $user, Request $request)
     {
         $this->user = $user;
+        $this->request = $request;
     }
 
     /**
@@ -50,19 +65,80 @@ class Cub
     }
 
     /**
-     * @param $token
+     * @param null $token
      *
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getUserByJWT($token)
+    public function getUserByJWT($token = null)
     {
+        if (!$token) {
+            $token = $this->getRequestJWT();
+        }
+
         $decoded = (array) JWT::decode($token, Config::get('cub.secret_key'), [self::ALGO]);
 
         return $this->getUserById($decoded[self::CUB_ID_KEY]);
     }
 
     /**
-     * @param Model $appUser
+     * Check if a valid Cub JWT exists on the request
+     *
+     * @return bool
+     */
+    public function validJWTExists()
+    {
+        try {
+            $jwt = $this->getRequestJWT();
+        } catch (NoJWTOnRequestException $e) {
+            return false;
+        }
+
+        try {
+            $decoded = (array) JWT::decode($jwt, Config::get('cub.secret_key'), [self::ALGO]);
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        return array_key_exists(self::CUB_ID_KEY, $decoded);
+    }
+
+    /**
+     * @param string $query
+     *
+     * @return string
+     * @throws NoJWTOnRequestException
+     */
+    public function getRequestJWT($query = 'cub_token')
+    {
+        if (!$token = $this->parseAuthHeader()) {
+            if (!$token = $this->request->query($query, false)) {
+                throw new NoJWTOnRequestException();
+            }
+        }
+
+        return $token;
+    }
+
+    /**
+     * Parse token from the authorization header
+     *
+     * @param string  $header
+     * @param string  $method
+     * @return false|string
+     */
+    protected function parseAuthHeader($header = 'authorization', $method = 'bearer')
+    {
+        $header = $this->request->headers->get($header);
+
+        if (! starts_with(strtolower($header), $method)) {
+            return false;
+        }
+
+        return trim(str_ireplace($method, '', $header));
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appUser
      * @param Cub_User $cubUser
      *
      * @return void
@@ -84,7 +160,7 @@ class Cub
     }
 
     /**
-     * @param Model $appUser
+     * @param \Illuminate\Database\Eloquent\Model $appUser
      *
      * @return void
      */

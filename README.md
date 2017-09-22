@@ -51,16 +51,30 @@ For convenience, you have the ability to get an instance of your application's U
  ```
  
  #### Getting a user by JWT
- For convenience, you have the ability to get an instance of your application's User model when you possess a JWT.
+ For convenience, you have the ability to get an instance of your application's User model when you possess a Cub JWT.
   ```php
   // an instance of your application's User model
   $user = Cub::getUserByJWT($jwt);
   ```
+  
+  Or if the Cub JWT was passed in on the request in the Authorization request header or with a query parameter with the key of `cub_token`.
+  ```php
+  // an instance of your application's User model
+  $user = Cub::getUserByJWT();
+  ```
  
  #### Route filtering for JWT
- This is also coming soon.
+ Filter routes based on the Cub JWT. The filter will check the request's Authorization header or it will check for the contents of the `cub_token` key in the request's query string.
  ```php
- I know I'm excited!
+ Route::get('restricted', ['before' => 'cub-auth', function() {
+    return json_encode(['message' => 'You're in!']);
+ }]);
+ ```
+ 
+ #### Convenience helper
+ Sometimes you may just need to know if there is a valid Cub JWT on the incoming request. Use this:
+ ```php
+ $exists = Cub::validJWTExists();
  ```
 
 ## Configuration
