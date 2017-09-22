@@ -47,14 +47,15 @@ $token = $login->getToken();
 For convenience, you have the ability to get an instance of your application's User model when you possess a `cub_id`.
  ```php
  // an instance of your application's User model
- $user = Cub::getUserByCubId($cubId);
+ $user = Cub::getUserById($cubId);
  ```
  
  #### Getting a user by JWT
- This is coming soon.
- ```php
- Get excited!
- ```
+ For convenience, you have the ability to get an instance of your application's User model when you possess a JWT.
+  ```php
+  // an instance of your application's User model
+  $user = Cub::getUserByJWT($jwt);
+  ```
  
  #### Route filtering for JWT
  This is also coming soon.

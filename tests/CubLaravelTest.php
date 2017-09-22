@@ -2,7 +2,8 @@
 
 use Cub;
 use Config;
-use Praetoriandigital\CubLaravel\Exceptions\UserNotFoundException;
+use Firebase\JWT\JWT;
+use Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 use Praetoriandigital\CubLaravel\Test\Models\User;
 
 class CubLaravelTest extends CubLaravelTestCase
@@ -19,7 +20,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
     /**
      * @test
-     * @expectedException \Praetoriandigital\CubLaravel\Exceptions\UserNotFoundException
+     * @expectedException \Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException
      */
     public function exception_thrown_when_cub_user_is_not_application_user()
     {
@@ -27,26 +28,68 @@ class CubLaravelTest extends CubLaravelTestCase
         Cub::login($this->credentials['username'], $this->credentials['password']);
     }
 
+    /** @test */
+    public function application_user_is_returned_from_get_user_by_id()
+    {
+        $expected = User::whereCubId($this->details['id'])->first();
+        $actual = Cub::getUserById($this->details['id']);
+
+        $this->assertEquals($expected, $actual);
+    }
+
     /**
      * @test
-     * @expectedException \Praetoriandigital\CubLaravel\Exceptions\UserNotFoundException
+     * @expectedException \Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException
      */
     public function exception_thrown_when_no_cub_id()
     {
-        Cub::getUserByCubId('');
+        Cub::getUserById('');
     }
 
     /** @test */
-    public function exception_method_is_descript()
+    public function no_cub_id_exception_method_is_descript()
     {
         $expected = 'User not found with cub_id {empty_string}';
         $actual = '';
         try {
-            Cub::getUserByCubId('');
-        } catch (UserNotFoundException $e) {
+            Cub::getUserById('');
+        } catch (UserNotFoundByCubIdException $e) {
             $actual = $e->getMessage();
         }
         $this->assertEquals($expected, $actual);
+    }
+
+    /** @test */
+    public function application_user_is_returned_from_get_user_by_jwt()
+    {
+        $expected = User::whereCubId($this->details['id'])->first();
+
+        $token = [
+            'cub_id' => $expected->cub_id,
+        ];
+        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+
+        $actual = Cub::getUserByJWT($jwt);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
+     * @expectedException \Exception
+     */
+    public function exception_thrown_when_no_jwt()
+    {
+        Cub::getUserByJWT('');
+    }
+
+    /**
+     * @test
+     * @expectedException \Exception
+     */
+    public function exception_thrown_when_bad_jwt()
+    {
+        Cub::getUserByJWT('kjashdkfjahkjashdfklaj');
     }
 
     /** @test */

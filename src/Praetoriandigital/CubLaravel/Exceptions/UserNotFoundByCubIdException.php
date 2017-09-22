@@ -1,9 +1,9 @@
 <?php namespace Praetoriandigital\CubLaravel\Exceptions;
 
-class UserNotFoundException extends \Exception
+class UserNotFoundByCubIdException extends \Exception
 {
     /**
-     * UserNotFoundException constructor.
+     * UserNotFoundByCubIdException constructor.
      *
      * @param string|null $cubId
      */
