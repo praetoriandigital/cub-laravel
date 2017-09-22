@@ -23,16 +23,9 @@ class CubWebhookController extends Controller
             $user = Cub::getUserById($object->id);
             if ($user) {
                 if ($object->deleted) {
-                    $user->delete();
+                    Cub::deleteUser($user);
                 } else {
-                    $fields = Config::get('cub.fields');
-                    $updates = [];
-                    foreach ($fields as $cubField => $appField) {
-                        $updates[$appField] = $object->{$cubField};
-                    }
-                    if (count($updates)) {
-                        $user->update($updates);
-                    }
+                    Cub::updateUser($user, $object);
                 }
             }
         }

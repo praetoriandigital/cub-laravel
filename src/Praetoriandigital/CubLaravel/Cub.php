@@ -60,4 +60,36 @@ class Cub
 
         return $this->getUserById($decoded[self::CUB_ID_KEY]);
     }
+
+    /**
+     * @param Model $appUser
+     * @param Cub_User $cubUser
+     *
+     * @return void
+     */
+    public function updateUser(Model $appUser, Cub_User $cubUser)
+    {
+        $fields = Config::get('cub.fields');
+        if (is_array($fields)) {
+            $updates = [];
+            foreach ($fields as $cubField => $appField) {
+                if (in_array($appField, array_keys($appUser['attributes']))) {
+                    $updates[$appField] = $cubUser->{$cubField};
+                }
+            }
+            if (count($updates)) {
+                $appUser->update($updates);
+            }
+        }
+    }
+
+    /**
+     * @param Model $appUser
+     *
+     * @return void
+     */
+    public function deleteUser(Model $appUser)
+    {
+        $appUser->delete();
+    }
 }
