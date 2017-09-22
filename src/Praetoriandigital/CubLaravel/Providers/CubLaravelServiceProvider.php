@@ -64,7 +64,7 @@ class CubLaravelServiceProvider extends ServiceProvider
     protected function registerUserProvider()
     {
         $this->app->singleton('pd.cub.provider.user', function ($app) {
-            $provider = Config::get('cub.provider.user');
+            $provider = 'Praetoriandigital\CubLaravel\Providers\User\EloquentUserAdapter';
             $model = $app->make(Config::get('cub.user'));
             return new $provider($model);
         });

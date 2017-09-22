@@ -44,7 +44,7 @@ return array(
   |
   */
 
-  'webhook_url' => getEnv('CUB_WEBHOOK_URL', 'webhooks/cub'),
+  'webhook_url' => getEnv('CUB_WEBHOOK_URL'),
 
   /*
   |--------------------------------------------------------------------------
@@ -55,31 +55,6 @@ return array(
   |
   */
 
-  'user' => 'User',
-
-  /*
-    |--------------------------------------------------------------------------
-    | Providers
-    |--------------------------------------------------------------------------
-    |
-    | Specify the various providers used throughout the package.
-    |
-    */
-
-    'providers' => [
-
-        /*
-        |--------------------------------------------------------------------------
-        | User Provider
-        |--------------------------------------------------------------------------
-        |
-        | Specify the provider that is used to find the user based
-        | on the subject claim
-        |
-        */
-
-        'user' => 'Praetoriandigital\CubLaravel\Providers\User\EloquentUserAdapter',
-
-    ]
+  'user' => 'App\User',
 
 );
