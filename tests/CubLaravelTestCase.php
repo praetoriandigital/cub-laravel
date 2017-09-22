@@ -20,34 +20,41 @@ abstract class CubLaravelTestCase extends TestCase
         $artisan = $this->app->make('artisan');
 
         $this->details = [
-        'original_username' => 'ivelum',
-        'first_name' => 'do not remove of modify',
-        'last_name' => 'user for tests',
+            'original_username' => 'ivelum',
+            'first_name' => 'do not remove of modify',
+            'last_name' => 'user for tests',
+            'id' => 'usr_upfrcJvCTyXCVBj8',
         ];
         $this->credentials = [
-        'username' => 'support@ivelum.com',
-        'password' => 'SJW8Gg',
+            'username' => 'support@ivelum.com',
+            'password' => 'SJW8Gg',
         ];
 
         $artisan->call('migrate', [
-        '--database' => 'testbench',
-        '--path'     => '../tests/migrations',
+            '--database' => 'testbench',
+            '--path'     => '../tests/migrations',
         ]);
 
         $artisan->call('migrate', [
-        '--database' => 'testbench',
-        '--path'     => '/migrations',
+            '--database' => 'testbench',
+            '--path'     => '/migrations',
         ]);
 
-      // update our user to have a correct cub_id
-        DB::table('users')->where('id', 1)->update(['cub_id' => 'usr_upfrcJvCTyXCVBj8']);
+        // Update our user to have a correct cub_id
+        DB::table('users')->where('id', 1)->update(['cub_id' => $this->details['id']]);
     }
 
+    /**
+     * @return array
+     */
     protected function getPackageProviders()
     {
         return ['Praetoriandigital\CubLaravel\Providers\CubLaravelServiceProvider'];
     }
 
+    /**
+     * @return array
+     */
     protected function getPackageAliases()
     {
         return [
@@ -55,12 +62,12 @@ abstract class CubLaravelTestCase extends TestCase
         ];
     }
 
-  /**
-   * Define environment setup.
-   *
-   * @param  \Illuminate\Foundation\Application  $app
-   * @return void
-   */
+    /**
+    * Define environment setup.
+    *
+    * @param  \Illuminate\Foundation\Application  $app
+    * @return void
+    */
     protected function getEnvironmentSetUp($app)
     {
         // Setup default database to use sqlite :memory:
@@ -75,7 +82,12 @@ abstract class CubLaravelTestCase extends TestCase
         $app['config']->set('cub.secret_key', getEnv('CUB_SECRET'));
         $app['config']->set('cub.api_url', getEnv('CUB_API_URL'));
         $app['config']->set('cub.webhook_url', getEnv('CUB_WEBHOOK_URL'));
-        $app['config']->set('cub.provider.user', 'Praetoriandigital\CubLaravel\Providers\User\EloquentUserAdapter');
         $app['config']->set('cub.user', 'Praetoriandigital\CubLaravel\Test\Models\User');
+        $app['config']->set('cub.fields', [
+            'first_name' => 'first_name',
+            'last_name' => 'last_name',
+            'email' => 'email',
+            'username' => 'username',
+        ]);
     }
 }

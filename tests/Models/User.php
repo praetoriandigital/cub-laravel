@@ -4,5 +4,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-
+    public $fillable = [
+        'cub_id',
+        'first_name',
+        'last_name',
+        'email',
+        'username',
+    ];
 }

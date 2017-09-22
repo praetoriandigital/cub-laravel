@@ -1,17 +1,22 @@
 <?php namespace Praetoriandigital\CubLaravel\Controllers;
 
+use Config;
 use Cub_Object;
 use Cub_User;
 use Cub;
+use Illuminate\Routing\Controller;
+use Input;
 
-class CubWebhookController
+class CubWebhookController extends Controller
 {
     /**
-     * Process webhook
+     * Process Cub Webhook data
      */
     public function receive()
     {
         // Handle json data
+        // TODO: Update with real payload key
+        $jsonData = Input::get('payload', json_encode([]));
         $object = Cub_Object::fromJson($jsonData);
 
         if ($object instanceof Cub_User) {
@@ -22,8 +27,8 @@ class CubWebhookController
                 } else {
                     $fields = Config::get('cub.fields');
                     $updates = [];
-                    foreach ($fields as $cub => $local) {
-                        $updates[$local] = $user->get($cub);
+                    foreach ($fields as $cubField => $appField) {
+                        $updates[$appField] = $object->{$cubField};
                     }
                     if (count($updates)) {
                         $user->update($updates);
