@@ -30,6 +30,7 @@ abstract class CubLaravelTestCase extends TestCase
 
         $this->prepareDatabase();
         $this->prepareRoutes();
+        $this->modifyConfiguration($this->app);
     }
 
     /**
@@ -37,7 +38,7 @@ abstract class CubLaravelTestCase extends TestCase
      */
     protected function getPackageProviders()
     {
-        return ['Cub\CubLaravel\Providers\CubLaravelServiceProvider'];
+        return ['Cub\CubLaravel\ServiceProvider'];
     }
 
     /**
@@ -64,18 +65,6 @@ abstract class CubLaravelTestCase extends TestCase
           'driver'   => 'sqlite',
           'database' => ':memory:',
           'prefix'   => '',
-        ]);
-
-        $app['config']->set('cub.public_key', getEnv('CUB_PUBLIC'));
-        $app['config']->set('cub.secret_key', getEnv('CUB_SECRET'));
-        $app['config']->set('cub.api_url', getEnv('CUB_API_URL'));
-        $app['config']->set('cub.webhook_url', getEnv('CUB_WEBHOOK_URL'));
-        $app['config']->set('cub.user', 'Cub\CubLaravel\Test\Models\User');
-        $app['config']->set('cub.fields', [
-            'first_name' => 'first_name',
-            'last_name' => 'last_name',
-            'email' => 'email',
-            'username' => 'username',
         ]);
     }
 
@@ -110,5 +99,13 @@ abstract class CubLaravelTestCase extends TestCase
         }]);
 
         $this->app['router']->enableFilters();
+    }
+
+    /**
+     * Perform user specific configuration.
+     */
+    protected function modifyConfiguration($app)
+    {
+        $app['config']->set('cub::config.user', 'Cub\CubLaravel\Test\Models\User');
     }
 }

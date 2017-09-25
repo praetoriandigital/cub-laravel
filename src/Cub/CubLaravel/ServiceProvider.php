@@ -1,12 +1,9 @@
-<?php namespace Cub\CubLaravel\Providers;
+<?php namespace Cub\CubLaravel;
 
-use Illuminate\Support\ServiceProvider;
-use Config;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Cub_Config;
-use Cub\CubLaravel\Cub;
-use Cub\CubLaravel\CubAuthFilter;
 
-class CubLaravelServiceProvider extends ServiceProvider
+class ServiceProvider extends BaseServiceProvider
 {
 
     /**
@@ -30,10 +27,10 @@ class CubLaravelServiceProvider extends ServiceProvider
         // register the filter
         $this->app['router']->filter('cub-auth', 'pd.cub.auth-filter');
 
-        include __DIR__.'/../routes.php';
+        include __DIR__ . '/routes.php';
 
-        Cub_Config::$api_key = Config::get('cub.secret_key');
-        Cub_Config::$api_url = Config::get('cub.api_url');
+        Cub_Config::$api_key = $this->app['config']->get('cub::config.secret_key');
+        Cub_Config::$api_url = $this->app['config']->get('cub::config.api_url');
     }
 
     /**
@@ -59,7 +56,7 @@ class CubLaravelServiceProvider extends ServiceProvider
         $this->registerCubAuthFilter();
 
         $this->app->bind('cub', function ($app) {
-            return new Cub($app->make(Config::get('cub.user')), $app['request']);
+            return new Cub($app->make($app['config']->get('cub::config.user')), $app['request']);
         });
     }
 
@@ -70,7 +67,7 @@ class CubLaravelServiceProvider extends ServiceProvider
     {
         $this->app->singleton('pd.cub.provider.user', function ($app) {
             $provider = 'Cub\CubLaravel\Providers\User\EloquentUserAdapter';
-            $model = $app->make(Config::get('cub.user'));
+            $model = $app->make($app['config']->get('cub::config.user'));
             return new $provider($model);
         });
     }

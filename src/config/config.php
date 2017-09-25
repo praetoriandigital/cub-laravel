@@ -44,7 +44,7 @@ return array(
     |
     */
 
-    'webhook_url' => getEnv('CUB_WEBHOOK_URL'),
+    'webhook_url' => 'webhooks/cub',
 
     /*
     |--------------------------------------------------------------------------

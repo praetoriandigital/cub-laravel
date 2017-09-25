@@ -74,7 +74,7 @@ class Cub
             $token = $this->getRequestJWT();
         }
 
-        $decoded = (array) JWT::decode($token, Config::get('cub.secret_key'), [self::ALGO]);
+        $decoded = (array) JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
 
         return $this->getUserById($decoded[self::CUB_ID_KEY]);
     }
@@ -93,7 +93,7 @@ class Cub
         }
 
         try {
-            $decoded = (array) JWT::decode($jwt, Config::get('cub.secret_key'), [self::ALGO]);
+            $decoded = (array) JWT::decode($jwt, Config::get('cub::config.secret_key'), [self::ALGO]);
         } catch (\Exception $e) {
             return false;
         }
@@ -144,7 +144,7 @@ class Cub
      */
     public function updateUser(Model $appUser, Cub_User $cubUser)
     {
-        $fields = Config::get('cub.fields');
+        $fields = Config::get('cub::config.fields');
         if (is_array($fields)) {
             $updates = [];
             foreach ($fields as $cubField => $appField) {

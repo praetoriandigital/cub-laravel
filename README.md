@@ -166,7 +166,7 @@ return array(
     |
     */
     
-    'webhook_url' => getEnv('CUB_WEBHOOK_URL'), // set this to your application's webhook url
+    'webhook_url' => 'webhooks/cub', // set this to your application's webhook url
     
     /*
     |--------------------------------------------------------------------------

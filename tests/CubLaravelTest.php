@@ -1,7 +1,6 @@
 <?php namespace Cub\CubLaravel\Test;
 
 use Cub;
-use Config;
 use Firebase\JWT\JWT;
 use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 use Cub\CubLaravel\Test\Models\User;
@@ -14,7 +13,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = $login->getUser();
 
-        $this->assertInstanceOf(Config::get('cub.user'), $user);
+        $this->assertInstanceOf($this->app['config']->get('cub::config.user'), $user);
         $this->assertEquals($user->email, $this->credentials['username']);
     }
 
@@ -93,7 +92,7 @@ class CubLaravelTest extends CubLaravelTestCase
     /** @test */
     public function webhook_url_is_registered()
     {
-        $this->call('POST', Config::get('cub.webhook_url'), [
+        $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
             'payload' => json_encode([
                 'object' => 'User',
                 'id' => $this->details['id'],
@@ -114,7 +113,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $expectedEmail = 'luke@lukeskywalker.com';
         $expectedUsername = 'lukie1';
 
-        $this->call('POST', Config::get('cub.webhook_url'), [
+        $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
             'payload' => json_encode([
                 'object' => 'User',
                 'id' => $this->details['id'],
@@ -136,7 +135,7 @@ class CubLaravelTest extends CubLaravelTestCase
     /** @test */
     public function deleted_cub_user_deletes_application_user()
     {
-        $this->call('POST', Config::get('cub.webhook_url'), [
+        $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
             'payload' => json_encode([
                 'object' => 'User',
                 'id' => $this->details['id'],
@@ -212,7 +211,7 @@ class CubLaravelTest extends CubLaravelTestCase
             'exp' => time() - 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
 
@@ -232,7 +231,7 @@ class CubLaravelTest extends CubLaravelTestCase
             'exp' => time() - 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
@@ -252,7 +251,7 @@ class CubLaravelTest extends CubLaravelTestCase
             'nbf' => time() + 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
 
@@ -272,7 +271,7 @@ class CubLaravelTest extends CubLaravelTestCase
             'nbf' => time() + 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
@@ -293,7 +292,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $token = [
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
 
@@ -314,7 +313,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $token = [
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
