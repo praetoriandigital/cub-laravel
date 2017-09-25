@@ -23,7 +23,7 @@ class CubLaravelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->package('praetoriandigital/cub-laravel', 'cub');
+        $this->package('cub/cub-laravel', 'cub');
 
         $this->bootBindings();
 

@@ -39,6 +39,17 @@ Next make sure to add the Cub alias in the `aliases` array in the same `config/a
 'Cub' => Cub\CubLaravel\Facades\Cub::class,
 ```
 
+Next add the `cub_id` field to your Users table with the following commands:
+```php
+// Add the migration to your migrations directory
+php artisan migrate --package="cub/cub-laravel"
+
+// Run the migration
+php artisan migrate
+```
+
+IMPORTANT: You will need to update your users table with each users's corresponding Cub user id.
+
 ## Usage
 
 #### Logging in
@@ -105,7 +116,7 @@ CUB_WEBHOOK_URL
 But if you need to change the user model, or if you prefer to set a lot of this in the config file you can do the following.
 
 ```php
-php artisan config:publish praetoriandigital/cub-laravel
+php artisan config:publish cub/cub-laravel
 ```
 
 Then you can update the config file as below. 
