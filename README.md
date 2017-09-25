@@ -24,7 +24,7 @@ Currently only compatible with Laravel 4.2.*
 Via Composer
 
 ``` bash
-$ composer require praetoriandigital/cub-laravel
+$ composer require "cub/cub-laravel:~1.0"
 ```
 
 After updating composer, add the CubLaravelServiceProvider to the `providers` array in `config/app.php`
