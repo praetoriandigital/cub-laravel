@@ -9,6 +9,6 @@ class UserNotFoundByCubIdException extends \Exception
      */
     public function __construct($cubId = null)
     {
-        $this->message = 'User not found with cub_id '.($cubId != '' ? : '{empty_string}');
+        $this->message = 'User not found with Cub user id '.($cubId != '' ? : '{empty_string}');
     }
 }

@@ -11,7 +11,7 @@ use Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 class Cub
 {
     const ALGO = 'HS256';
-    const CUB_ID_KEY = 'cub_id';
+    const CUB_ID_KEY = 'user';
 
     /**
      * @var \Illuminate\Database\Eloquent\Model

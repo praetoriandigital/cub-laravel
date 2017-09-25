@@ -48,8 +48,8 @@ $user = $login->getUser();
 $token = $login->getToken();
 ```
 
-#### Getting a user by `cub_id`
-For convenience, you have the ability to get an instance of your application's User model when you possess a `cub_id`.
+#### Getting a user by Cub `user` id
+For convenience, you have the ability to get an instance of your application's User model when you possess a Cub `user` id.
  ```php
  // an instance of your application's User model
  $user = Cub::getUserById($cubId);

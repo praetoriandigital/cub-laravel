@@ -41,15 +41,15 @@ class CubLaravelTest extends CubLaravelTestCase
      * @test
      * @expectedException \Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException
      */
-    public function exception_thrown_when_no_cub_id()
+    public function exception_thrown_when_no_cub_user_id()
     {
         Cub::getUserById('');
     }
 
     /** @test */
-    public function no_cub_id_exception_method_is_descript()
+    public function no_cub_user_id_exception_method_is_descript()
     {
-        $expected = 'User not found with cub_id {empty_string}';
+        $expected = 'User not found with Cub user id {empty_string}';
         $actual = '';
         try {
             Cub::getUserById('');
@@ -64,10 +64,8 @@ class CubLaravelTest extends CubLaravelTestCase
     {
         $expected = User::whereCubId($this->details['id'])->first();
 
-        $token = [
-            'cub_id' => $expected->cub_id,
-        ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+        $jwt = $login->getToken();
 
         $actual = Cub::getUserByJWT($jwt);
 
@@ -162,10 +160,8 @@ class CubLaravelTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'Right on!']),
         ];
 
-        $token = [
-            'cub_id' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+        $jwt = $login->getToken();
 
         $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
 
@@ -181,10 +177,8 @@ class CubLaravelTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'Right on!']),
         ];
 
-        $token = [
-            'cub_id' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, Config::get('cub.secret_key'));
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+        $jwt = $login->getToken();
 
         $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
@@ -216,7 +210,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
         $token = [
             'exp' => time() - 5000,
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, Config::get('cub.secret_key'));
 
@@ -236,7 +230,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
         $token = [
             'exp' => time() - 5000,
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, Config::get('cub.secret_key'));
 
@@ -256,7 +250,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
         $token = [
             'nbf' => time() + 5000,
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, Config::get('cub.secret_key'));
 
@@ -276,7 +270,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
         $token = [
             'nbf' => time() + 5000,
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, Config::get('cub.secret_key'));
 
@@ -297,7 +291,7 @@ class CubLaravelTest extends CubLaravelTestCase
         ];
 
         $token = [
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, Config::get('cub.secret_key'));
 
@@ -318,7 +312,7 @@ class CubLaravelTest extends CubLaravelTestCase
         ];
 
         $token = [
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, Config::get('cub.secret_key'));
 
@@ -339,7 +333,7 @@ class CubLaravelTest extends CubLaravelTestCase
         ];
 
         $token = [
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, 'giveme500!');
 
@@ -360,7 +354,7 @@ class CubLaravelTest extends CubLaravelTestCase
         ];
 
         $token = [
-            'cub_id' => $this->details['id'],
+            'user' => $this->details['id'],
         ];
         $jwt = JWT::encode($token, 'giveme500!');
 
