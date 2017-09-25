@@ -1,4 +1,4 @@
-<?php namespace Praetoriandigital\CubLaravel\Facades;
+<?php namespace Cub\CubLaravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 

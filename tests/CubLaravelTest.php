@@ -1,10 +1,10 @@
-<?php namespace Praetoriandigital\CubLaravel\Test;
+<?php namespace Cub\CubLaravel\Test;
 
 use Cub;
 use Config;
 use Firebase\JWT\JWT;
-use Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException;
-use Praetoriandigital\CubLaravel\Test\Models\User;
+use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Test\Models\User;
 
 class CubLaravelTest extends CubLaravelTestCase
 {
@@ -20,7 +20,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
     /**
      * @test
-     * @expectedException \Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException
+     * @expectedException \Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException
      */
     public function exception_thrown_when_cub_user_is_not_application_user()
     {
@@ -39,7 +39,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
     /**
      * @test
-     * @expectedException \Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException
+     * @expectedException \Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException
      */
     public function exception_thrown_when_no_cub_user_id()
     {

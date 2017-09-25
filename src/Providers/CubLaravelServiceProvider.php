@@ -1,10 +1,10 @@
-<?php namespace Praetoriandigital\CubLaravel\Providers;
+<?php namespace Cub\CubLaravel\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Config;
 use Cub_Config;
-use Praetoriandigital\CubLaravel\Cub;
-use Praetoriandigital\CubLaravel\CubAuthFilter;
+use Cub\CubLaravel\Cub;
+use Cub\CubLaravel\CubAuthFilter;
 
 class CubLaravelServiceProvider extends ServiceProvider
 {
@@ -43,7 +43,7 @@ class CubLaravelServiceProvider extends ServiceProvider
      */
     protected function bootBindings()
     {
-        $this->app->singleton('Praetoriandigital\CubLaravel\Providers\User\UserInterface', function ($app) {
+        $this->app->singleton('Cub\CubLaravel\Providers\User\UserInterface', function ($app) {
             return $app['pd.cub.provider.user'];
         });
     }
@@ -69,7 +69,7 @@ class CubLaravelServiceProvider extends ServiceProvider
     protected function registerUserProvider()
     {
         $this->app->singleton('pd.cub.provider.user', function ($app) {
-            $provider = 'Praetoriandigital\CubLaravel\Providers\User\EloquentUserAdapter';
+            $provider = 'Cub\CubLaravel\Providers\User\EloquentUserAdapter';
             $model = $app->make(Config::get('cub.user'));
             return new $provider($model);
         });

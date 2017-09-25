@@ -1,12 +1,12 @@
-<?php namespace Praetoriandigital\CubLaravel;
+<?php namespace Cub\CubLaravel;
 
 use Config;
 use Cub_User;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Praetoriandigital\CubLaravel\Exceptions\NoJWTOnRequestException;
-use Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
+use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 
 class Cub
 {

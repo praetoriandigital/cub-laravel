@@ -1,4 +1,4 @@
-<?php namespace Praetoriandigital\CubLaravel\Test\Models;
+<?php namespace Cub\CubLaravel\Test\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

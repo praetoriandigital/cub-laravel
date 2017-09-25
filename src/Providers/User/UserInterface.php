@@ -1,4 +1,4 @@
-<?php namespace Praetoriandigital\CubLaravel\Providers\User;
+<?php namespace Cub\CubLaravel\Providers\User;
 
 interface UserInterface
 {

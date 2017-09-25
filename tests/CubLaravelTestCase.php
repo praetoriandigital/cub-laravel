@@ -1,4 +1,4 @@
-<?php namespace Praetoriandigital\CubLaravel\Test;
+<?php namespace Cub\CubLaravel\Test;
 
 use DB;
 use Orchestra\Testbench\TestCase;
@@ -37,7 +37,7 @@ abstract class CubLaravelTestCase extends TestCase
      */
     protected function getPackageProviders()
     {
-        return ['Praetoriandigital\CubLaravel\Providers\CubLaravelServiceProvider'];
+        return ['Cub\CubLaravel\Providers\CubLaravelServiceProvider'];
     }
 
     /**
@@ -46,7 +46,7 @@ abstract class CubLaravelTestCase extends TestCase
     protected function getPackageAliases()
     {
         return [
-          'Cub' => 'Praetoriandigital\CubLaravel\Facades\CubLaravel',
+          'Cub' => 'Cub\CubLaravel\Facades\CubLaravel',
         ];
     }
 
@@ -70,7 +70,7 @@ abstract class CubLaravelTestCase extends TestCase
         $app['config']->set('cub.secret_key', getEnv('CUB_SECRET'));
         $app['config']->set('cub.api_url', getEnv('CUB_API_URL'));
         $app['config']->set('cub.webhook_url', getEnv('CUB_WEBHOOK_URL'));
-        $app['config']->set('cub.user', 'Praetoriandigital\CubLaravel\Test\Models\User');
+        $app['config']->set('cub.user', 'Cub\CubLaravel\Test\Models\User');
         $app['config']->set('cub.fields', [
             'first_name' => 'first_name',
             'last_name' => 'last_name',

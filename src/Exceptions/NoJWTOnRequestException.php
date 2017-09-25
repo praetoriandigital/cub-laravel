@@ -1,4 +1,4 @@
-<?php namespace Praetoriandigital\CubLaravel\Exceptions;
+<?php namespace Cub\CubLaravel\Exceptions;
 
 class NoJWTOnRequestException extends \Exception
 {

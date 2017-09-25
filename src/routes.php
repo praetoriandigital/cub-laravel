@@ -9,4 +9,4 @@
 |
 */
 
-Route::post(Config::get('cub.webhook_url'), 'Praetoriandigital\CubLaravel\Controllers\CubWebhookController@receive');
+Route::post(Config::get('cub.webhook_url'), 'Cub\CubLaravel\Controllers\CubWebhookController@receive');

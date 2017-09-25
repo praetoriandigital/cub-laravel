@@ -1,9 +1,9 @@
-<?php namespace Praetoriandigital\CubLaravel;
+<?php namespace Cub\CubLaravel;
 
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
-use Praetoriandigital\CubLaravel\Exceptions\NoJWTOnRequestException;
-use Praetoriandigital\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
+use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 use Response;
 
 class CubAuthFilter

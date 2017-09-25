@@ -20,12 +20,12 @@
             "src/migrations"
         ],
         "psr-4": {
-            "Praetoriandigital\\CubLaravel\\": "src"
+            "Cub\\CubLaravel\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Praetoriandigital\\CubLaravel\\Test\\": "tests"
+            "Cub\\CubLaravel\\Test\\": "tests"
         }
     },
     "minimum-stability": "stable",

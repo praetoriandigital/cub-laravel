@@ -1,4 +1,4 @@
-<?php namespace Praetoriandigital\CubLaravel\Controllers;
+<?php namespace Cub\CubLaravel\Controllers;
 
 use Config;
 use Cub;
