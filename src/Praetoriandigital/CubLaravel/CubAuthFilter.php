@@ -47,7 +47,6 @@ class CubAuthFilter
         } catch (\Exception $e) {
             return $this->respond('error_processing_token', 500);
         }
-
     }
 
     /**

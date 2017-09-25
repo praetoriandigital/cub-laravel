@@ -167,9 +167,4 @@ class Cub
     {
         $appUser->delete();
     }
-
-    public function getWidget()
-    {
-        return '<script>'.Config::get('cub.public_key').'</script>';
-    }
 }
