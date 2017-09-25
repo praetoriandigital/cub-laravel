@@ -1,9 +1,9 @@
 <?php namespace Praetoriandigital\CubLaravel\Controllers;
 
 use Config;
+use Cub;
 use Cub_Object;
 use Cub_User;
-use Cub;
 use Illuminate\Routing\Controller;
 use Input;
 
