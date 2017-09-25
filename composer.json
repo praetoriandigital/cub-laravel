@@ -1,5 +1,5 @@
 {
-    "name": "pd/cub-laravel",
+    "name": "cub/cub-laravel",
     "description": "Laravel wrapper for cub/cub",
     "keywords": ["cub", "laravel"],
     "license": "MIT",

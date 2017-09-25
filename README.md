@@ -1,5 +1,11 @@
 # Cub Laravel
 
+[![Built For Laravel][ico-built-for]][link-built-for]
+[![Build Status][ico-travis]][link-travis]
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Total Downloads][ico-downloads]][link-downloads]
+[![Software License][ico-license]](LICENSE.md)
+
 Laravel wrapper for [ivelum/cub-php][link-cub-php].
 
 Use for authenticating your users with Cub. Keep your user data up-to-date with what is happening in Cub.
@@ -189,5 +195,14 @@ return array(
 );
 ```
 
+[ico-version]: https://img.shields.io/packagist/v/cub/cub-laravel.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+[ico-travis]: https://img.shields.io/travis/praetoriandigital/cub-laravel/master.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/cub/cub-laravel.svg?style=flat-square
+[ico-built-for]: https://img.shields.io/badge/built%20for-laravel-blue.svg
 
+[link-packagist]: https://packagist.org/packages/cub/cub-laravel
+[link-travis]: https://travis-ci.org/praetoriandigital/cub-laravel
+[link-downloads]: https://packagist.org/packages/cub/cub-laravel
+[link-built-for]: http://laravel.com
 [link-cub-php]: https://github.com/ivelum/cub-php
