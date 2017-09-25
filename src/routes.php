@@ -1,7 +1,5 @@
 <?php
 
-use Praetoriandigital\CubLaravel\Controllers\CubWebhookController;
-
 /*
 |--------------------------------------------------------------------------
 | Package Routes
@@ -11,4 +9,4 @@ use Praetoriandigital\CubLaravel\Controllers\CubWebhookController;
 |
 */
 
-Route::post(Config::get('cub.webhook_url'), CubWebhookController::class.'@receive');
+Route::post(Config::get('cub.webhook_url'), 'Praetoriandigital\CubLaravel\Controllers\CubWebhookController@receive');
