@@ -30,7 +30,7 @@ class CubLaravelServiceProvider extends ServiceProvider
         // register the filter
         $this->app['router']->filter('cub-auth', 'pd.cub.auth-filter');
 
-        include __DIR__.'/../../../routes.php';
+        include __DIR__.'/../routes.php';
 
         Cub_Config::$api_key = Config::get('cub.secret_key');
         Cub_Config::$api_url = Config::get('cub.api_url');
