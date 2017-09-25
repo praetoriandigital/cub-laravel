@@ -6,7 +6,7 @@
 [![Total Downloads][ico-downloads]][link-downloads]
 [![Software License][ico-license]](LICENSE.md)
 
-Laravel wrapper for [ivelum/cub-php][link-cub-php].
+Laravel wrapper for [cub/cub][link-cub-php].
 
 Use for authenticating your users with Cub. Keep your user data up-to-date with what is happening in Cub.
 
@@ -216,4 +216,4 @@ return array(
 [link-travis]: https://travis-ci.org/praetoriandigital/cub-laravel
 [link-downloads]: https://packagist.org/packages/cub/cub-laravel
 [link-built-for]: http://laravel.com
-[link-cub-php]: https://github.com/ivelum/cub-php
+[link-cub-php]: https://packagist.org/packages/cub/cub
