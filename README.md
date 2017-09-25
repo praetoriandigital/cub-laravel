@@ -39,13 +39,9 @@ Next make sure to add the Cub alias in the `aliases` array in the same `config/a
 'Cub' => Cub\CubLaravel\Facades\Cub::class,
 ```
 
-Next add the `cub_id` field to your Users table with the following commands:
+Next add the `cub_id` field to your Users table with the following command:
 ```php
-// Add the migration to your migrations directory
 php artisan migrate --package="cub/cub-laravel"
-
-// Run the migration
-php artisan migrate
 ```
 
 IMPORTANT: You will need to update your users table with each users's corresponding Cub user id.
