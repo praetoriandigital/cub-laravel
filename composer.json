@@ -19,13 +19,13 @@
         "classmap": [
             "src/migrations"
         ],
-        "psr-4": {
-            "Cub\\CubLaravel\\": "src"
+        "psr-0": {
+            "Cub\\CubLaravel": "src/"
         }
     },
     "autoload-dev": {
-        "psr-4": {
-            "Cub\\CubLaravel\\Test\\": "tests"
+        "psr-0": {
+            "Cub\\CubLaravel\\Test": "tests/"
         }
     },
     "minimum-stability": "stable",
