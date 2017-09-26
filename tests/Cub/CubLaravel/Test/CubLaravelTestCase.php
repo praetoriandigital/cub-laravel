@@ -15,7 +15,7 @@ abstract class CubLaravelTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->app['path.base'] = __DIR__ . '/../../../src';
+        $this->app['path.base'] = __DIR__ . '/../../../../src';
 
         $this->details = [
             'original_username' => 'ivelum',
@@ -77,7 +77,7 @@ abstract class CubLaravelTestCase extends TestCase
 
         $artisan->call('migrate', [
             '--database' => 'testbench',
-            '--path'     => '../tests/Cub/CubLaravel/migrations',
+            '--path'     => '../tests/Cub/CubLaravel/Test/migrations',
         ]);
 
         $artisan->call('migrate', [
