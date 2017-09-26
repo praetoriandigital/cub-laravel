@@ -30,7 +30,7 @@ $ composer require "cub/cub-laravel:~1.0"
 After updating composer, add the CubLaravelServiceProvider to the `providers` array in `config/app.php`
 
 ``` php
-Cub\CubLaravel\Providers\CubLaravelServiceProvider::class,
+Cub\CubLaravel\ServiceProvider::class,
 ```
 
 Next make sure to add the Cub alias in the `aliases` array in the same `config/app.php`
