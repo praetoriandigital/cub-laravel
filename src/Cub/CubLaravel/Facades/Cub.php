@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Facade;
 
-class CubLaravel extends Facade
+class Cub extends Facade
 {
     /**
      * @return string

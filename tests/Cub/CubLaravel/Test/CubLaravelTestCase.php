@@ -47,7 +47,7 @@ abstract class CubLaravelTestCase extends TestCase
     protected function getPackageAliases()
     {
         return [
-          'Cub' => 'Cub\CubLaravel\Facades\CubLaravel',
+          'Cub' => 'Cub\CubLaravel\Facades\Cub',
         ];
     }
 
