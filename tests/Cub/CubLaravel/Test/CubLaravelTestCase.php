@@ -1,5 +1,6 @@
 <?php namespace Cub\CubLaravel\Test;
 
+use Cub;
 use DB;
 use Orchestra\Testbench\TestCase;
 
@@ -95,7 +96,7 @@ abstract class CubLaravelTestCase extends TestCase
     protected function prepareRoutes()
     {
         $this->app['router']->get('restricted', ['before' => 'cub-auth', function () {
-            return json_encode(['message' => 'Right on!']);
+            return json_encode(['message' => 'Hello, Cub User '.Cub::currentUser()->cub_id]);
         }]);
 
         $this->app['router']->enableFilters();

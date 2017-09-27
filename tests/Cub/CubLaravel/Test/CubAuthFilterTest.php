@@ -11,7 +11,7 @@ class CubAuthFilterTest extends CubLaravelTestCase
     {
         $expected = [
             'code' => 200,
-            'content' => json_encode(['message' => 'Right on!']),
+            'content' => json_encode(['message' => 'Hello, Cub User '.$this->details['id']]),
         ];
 
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
@@ -28,7 +28,7 @@ class CubAuthFilterTest extends CubLaravelTestCase
     {
         $expected = [
             'code' => 200,
-            'content' => json_encode(['message' => 'Right on!']),
+            'content' => json_encode(['message' => 'Hello, Cub User '.$this->details['id']]),
         ];
 
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);

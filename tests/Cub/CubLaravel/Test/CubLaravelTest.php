@@ -17,6 +17,38 @@ class CubLaravelTest extends CubLaravelTestCase
         $this->assertEquals($user->email, $this->credentials['username']);
     }
 
+    /** @test */
+    public function application_user_is_returned_from_current_user()
+    {
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+        $user = Cub::currentUser();
+
+        $this->assertInstanceOf($this->app['config']->get('cub::config.user'), $user);
+        $this->assertEquals($login->getUser(), $user);
+    }
+
+    /** @test */
+    public function cub_jwt_is_returned_from_current_token()
+    {
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+
+        $this->assertEquals($login->getToken(), Cub::currentToken());
+    }
+
+    /** @test */
+    function logout_clears_current_user_and_token()
+    {
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+
+        $this->assertEquals($login->getUser(), Cub::currentUser());
+        $this->assertEquals($login->getToken(), Cub::currentToken());
+
+        Cub::logout();
+
+        $this->assertNull(Cub::currentUser());
+        $this->assertNull(Cub::currentToken());
+    }
+
     /**
      * @test
      * @expectedException \Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException

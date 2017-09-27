@@ -85,14 +85,24 @@ For convenience, you have the ability to get an instance of your application's U
  Filter routes based on the Cub JWT. The filter will check the request's Authorization header or it will check for the contents of the `cub_token` key in the request's query string.
  ```php
  Route::get('restricted', ['before' => 'cub-auth', function() {
-    return json_encode(['message' => 'You're in!']);
+    // after cub-auth the application user will be accessible as currentUser
+    $user = Cub::currentUser();
+    return json_encode(['message' => "You're in, {$user->first_name}!"]);
  }]);
  ```
  
- #### Convenience helper
+ #### Convenience helpers
  Sometimes you may just need to know if there is a valid Cub JWT on the incoming request. Use this:
  ```php
  $exists = Cub::validJWTExists();
+ ```
+
+ Get the current User and Token:
+ ```php
+ // application user
+ $user = Cub::currentUser();
+
+ $token = Cub::currentToken();
  ```
 
 ## Configuration

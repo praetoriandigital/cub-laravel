@@ -24,6 +24,10 @@ class Cub
      */
     protected $request;
 
+    private $currentUser = null;
+
+    private $currentToken = null;
+
     /**
      * Cub constructor.
      *
@@ -46,7 +50,67 @@ class Cub
     {
         $cub_user = Cub_User::login($username, $password);
         $user = $this->getUserById($cub_user->id);
+
+        $this->setCurrentUser($user);
+        $this->setCurrentToken($cub_user->token);
+
         return new Login($user, $cub_user->token);
+    }
+
+    /**
+     * @return void
+     */
+    public function logout()
+    {
+        $this->setCurrent();
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model|null $user
+     * @param string|null $token
+     *
+     * @return void
+     */
+    private function setCurrent(Model $user = null, $token = null)
+    {
+        $this->setCurrentUser($user);
+        $this->setCurrentToken($token);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model|null $user
+     *
+     * @return void
+     */
+    private function setCurrentUser(Model $user = null)
+    {
+        $this->currentUser = $user;
+    }
+
+    /**
+     * @param string|null $token
+     *
+     * @return void
+     */
+    private function setCurrentToken($token = null)
+    {
+        $this->currentToken = $token;
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function currentUser()
+    {
+        return $this->currentUser;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function currentToken()
+    {
+        return $this->currentToken;
     }
 
     /**
@@ -77,7 +141,9 @@ class Cub
 
         $decoded = (array) JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
 
-        return $this->getUserById($decoded[self::CUB_ID_KEY]);
+        $this->setCurrent($this->getUserById($decoded[self::CUB_ID_KEY]), $token);
+
+        return $this->currentUser();
     }
 
     /**
