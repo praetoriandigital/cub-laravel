@@ -49,6 +49,18 @@ class CubLaravelTest extends CubLaravelTestCase
         $this->assertNull(Cub::currentToken());
     }
 
+    /** @test */
+    function check_is_accurate()
+    {
+        Cub::login($this->credentials['username'], $this->credentials['password']);
+
+        $this->assertTrue(Cub::check());
+
+        Cub::logout();
+
+        $this->assertFalse(Cub::check());
+    }
+
     /**
      * @test
      * @expectedException \Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException

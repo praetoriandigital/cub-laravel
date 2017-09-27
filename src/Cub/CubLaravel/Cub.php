@@ -66,6 +66,14 @@ class Cub
     }
 
     /**
+     * @return bool
+     */
+    public function check()
+    {
+        return (bool) $this->currentUser();
+    }    
+
+    /**
      * @param \Illuminate\Database\Eloquent\Model|null $user
      * @param string|null $token
      *
