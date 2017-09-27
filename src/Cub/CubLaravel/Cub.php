@@ -12,7 +12,7 @@ class Cub
 {
     const ALGO = 'HS256';
     const CUB_ID_KEY = 'user';
-    const CUB_COOKIE = 'cubUserToken'
+    const CUB_COOKIE = 'cubUserToken';
 
     /**
      * @var \Illuminate\Database\Eloquent\Model
@@ -111,7 +111,7 @@ class Cub
     public function getRequestJWT($query = 'cub_token')
     {
         if (!$token = $this->parseAuthHeader()) {
-            if (!$token = $_COOKIE[self::CUB_COOKIE]) {
+            if (!$token = $this->getCubCookie()) {
                 if (!$token = $this->request->query($query, false)) {
                     throw new NoJWTOnRequestException();
                 }
@@ -137,6 +137,20 @@ class Cub
         }
 
         return trim(str_ireplace($method, '', $header));
+    }
+
+    /**
+     * Get token from cub cookie
+     *
+     * @return false|string
+     */
+    protected function getCubCookie() 
+    {
+        if (!isset($_COOKIE[self::CUB_COOKIE]) || $_COOKIE[self::CUB_COOKIE] == '') {
+            return false;
+        }
+
+        return $_COOKIE[self::CUB_COOKIE];
     }
 
     /**
