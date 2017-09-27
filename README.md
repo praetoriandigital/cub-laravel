@@ -75,7 +75,7 @@ For convenience, you have the ability to get an instance of your application's U
   $user = Cub::getUserByJWT($jwt);
   ```
   
-  Or if the Cub JWT was passed in on the request in the Authorization request header or with a query parameter with the key of `cub_token`.
+  Or if the Cub JWT was passed in on the request in the Authorization request header OR there is a `cubUserToken` cookie on the request OR the request was made with a query parameter with the key of `cub_token`. (The checking happens in the described order).
   ```php
   // an instance of your application's User model
   $user = Cub::getUserByJWT();

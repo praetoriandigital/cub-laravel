@@ -12,6 +12,7 @@ class Cub
 {
     const ALGO = 'HS256';
     const CUB_ID_KEY = 'user';
+    const CUB_COOKIE = 'cubUserToken'
 
     /**
      * @var \Illuminate\Database\Eloquent\Model
@@ -110,8 +111,10 @@ class Cub
     public function getRequestJWT($query = 'cub_token')
     {
         if (!$token = $this->parseAuthHeader()) {
-            if (!$token = $this->request->query($query, false)) {
-                throw new NoJWTOnRequestException();
+            if (!$token = $_COOKIE[self::CUB_COOKIE]) {
+                if (!$token = $this->request->query($query, false)) {
+                    throw new NoJWTOnRequestException();
+                }
             }
         }
 
