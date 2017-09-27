@@ -154,10 +154,33 @@ class Cub
     }
 
     /**
+     * @param Cub_User $cubUser
+     *
+     * @return bool
+     */
+    public function createUser(Cub_User $cubUser)
+    {
+        $fields = Config::get('cub::config.fields');
+        if (is_array($fields)) {
+            $attributes = [];
+            foreach ($fields as $cubField => $appField) {
+                if (in_array($appField, $this->user['fillable'])) {
+                    $attributes[$appField] = $cubUser->{$cubField};
+                }
+            }
+            if (count($attributes)) {
+                return (bool) $this->user->create($attributes);
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @param \Illuminate\Database\Eloquent\Model $appUser
      * @param Cub_User $cubUser
      *
-     * @return void
+     * @return bool
      */
     public function updateUser(Model $appUser, Cub_User $cubUser)
     {
@@ -170,18 +193,20 @@ class Cub
                 }
             }
             if (count($updates)) {
-                $appUser->update($updates);
+                return $appUser->update($updates);
             }
         }
+
+        return false;
     }
 
     /**
      * @param \Illuminate\Database\Eloquent\Model $appUser
      *
-     * @return void
+     * @return bool
      */
     public function deleteUser(Model $appUser)
     {
-        $appUser->delete();
+        return $appUser->delete();
     }
 }

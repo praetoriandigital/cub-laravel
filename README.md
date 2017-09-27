@@ -186,13 +186,15 @@ return array(
     |
     | This is where the mapping of the Cub User keys can
     | be mapped to the fields on your User model.
+    | i.e. 'cub_field' => 'application_field',
     |
     */
     
     // update the values of this array with the corresponding
-    // fields on your User model
-    // i.e. 'email' => 'user_email'
+    // fields on your User model or comment them out
+    // to ignore them
     'fields' => [
+        'id' => 'cub_id',
         'first_name' => 'first_name',
         'last_name' => 'last_name',
         'email' => 'email',

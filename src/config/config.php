@@ -64,10 +64,12 @@ return array(
     |
     | This is where the mapping of the Cub User keys can
     | be mapped to the fields on your User model.
+    | i.e. 'cub_field' => 'application_field',
     |
     */
 
     'fields' => [
+        'id' => 'cub_id',
         'first_name' => 'first_name',
         'last_name' => 'last_name',
         'email' => 'email',

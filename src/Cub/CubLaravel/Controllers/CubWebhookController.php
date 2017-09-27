@@ -2,6 +2,8 @@
 
 use Config;
 use Cub;
+use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Traits\RespondTrait;
 use Cub_Object;
 use Cub_User;
 use Illuminate\Routing\Controller;
@@ -9,6 +11,8 @@ use Input;
 
 class CubWebhookController extends Controller
 {
+    use RespondTrait;
+
     /**
      * Process Cub Webhook data
      */
@@ -20,14 +24,29 @@ class CubWebhookController extends Controller
         $object = Cub_Object::fromJson($jsonData);
 
         if ($object instanceof Cub_User) {
-            $user = Cub::getUserById($object->id);
-            if ($user) {
+            try {
+                $user = Cub::getUserById($object->id);
                 if ($object->deleted) {
-                    Cub::deleteUser($user);
+                    if (Cub::deleteUser($user)) {
+                        return $this->respondJSON('user_deleted', 200);    
+                    }
+                    return $this->respondJSON('error_deleting_user', 500);
                 } else {
-                    Cub::updateUser($user, $object);
+                    if (Cub::updateUser($user, $object)) {
+                        return $this->respondJSON('user_updated', 200);    
+                    }
+                    return $this->respondJSON('error_updating_user', 500);
                 }
+            } catch (UserNotFoundByCubIdException $e) {
+                if (Cub::createUser($object)) {
+                    return $this->respondJSON('user_created', 200);
+                }
+                return $this->respondJSON('error_creating_user', 500);
+            } catch (Exception $e) {
+                return $this->respondJSON('internal_error', 500);
             }
         }
+
+        return $this->respondJSON('nothing_to_update_or_create', 200);
     }
 }
