@@ -58,6 +58,10 @@ class ServiceProvider extends BaseServiceProvider
         $this->app->bind('cub', function ($app) {
             return new Cub($app->make($app['config']->get('cub::config.user')), $app['request']);
         });
+
+        $this->app->bind('cub-widget', function ($app) {
+            return new CubWidget;
+        });
     }
 
     /**

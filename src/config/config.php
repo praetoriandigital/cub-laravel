@@ -69,12 +69,32 @@ return array(
     */
 
     'fields' => [
-        'id' => 'cub_id',
-        'first_name' => 'first_name',
-        'last_name' => 'last_name',
-        'email' => 'email',
-        'username' => 'username',
         // more will come later as necessary
+        'birth_date' => 'birth_date',
+        'date_joined' => 'date_joined',
+        'email' => 'email',
+        'email_confirmed' => 'email_confirmed',
+        'first_name' => 'first_name',
+        'gender' => 'gender',
+        'id' => 'cub_id',
+        'invalid_email' => 'invalid_email',
+        'invitation_last_sent_on' => 'invitation_last_sent_on',
+        'invitation_sent_count' => 'invitation_sent_count',
+        'last_login' => 'last_login',
+        'last_name' => 'last_name',
+        'middle_name' => 'middle_name',
+        'original_username' => 'original_username',
+        'password_change_required' => 'password_change_required',
+        'photo_large' => 'photo_large',
+        'photo_small' => 'photo_small',
+        'purchasing_role_buy_for_organization' => 'purchasing_role_buy_for_organization',
+        'purchasing_role_buy_for_self_only' => 'purchasing_role_buy_for_self_only',
+        'purchasing_role_recommend' => 'purchasing_role_recommend',
+        'purchasing_role_specify_for_organization' => 'purchasing_role_specify_for_organization',
+        'registration_site' => 'registration_site',
+        'retired' => 'retired',
+        'token' => 'token',
+        'username' => 'username',
     ],
 
 );

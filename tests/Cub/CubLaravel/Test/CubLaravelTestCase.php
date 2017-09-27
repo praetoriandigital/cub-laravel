@@ -49,6 +49,7 @@ abstract class CubLaravelTestCase extends TestCase
     {
         return [
           'Cub' => 'Cub\CubLaravel\Facades\Cub',
+          'CubWidget' => 'Cub\CubLaravel\Facades\CubWidget',
         ];
     }
 

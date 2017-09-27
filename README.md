@@ -37,6 +37,7 @@ Next make sure to add the Cub alias in the `aliases` array in the same `config/a
 
 ``` php
 'Cub' => Cub\CubLaravel\Facades\Cub::class,
+'CubWidget' => Cub\CubLaravel\Facades\CubWidget::class,
 ```
 
 Next add the `cub_id` field to your Users table with the following command:
@@ -86,6 +87,7 @@ For convenience, you have the ability to get an instance of your application's U
  ```php
  Route::get('restricted', ['before' => 'cub-auth', function() {
     // after cub-auth the application user will be accessible as currentUser
+    // an instance of your application's User model 
     $user = Cub::currentUser();
     return json_encode(['message' => "You're in, {$user->first_name}!"]);
  }]);
@@ -99,10 +101,21 @@ For convenience, you have the ability to get an instance of your application's U
 
  Get the current User and Token:
  ```php
- // application user
+ // an instance of your application's User model 
  $user = Cub::currentUser();
 
+ // the current Cub JWT
  $token = Cub::currentToken();
+ ```
+
+ #### CubWidget
+ Get all the widget elements you need with the `CubWidget` facade. Look to the Cub Widget [docs][link-cub-widget-docs] for further information about the widget.
+ ```php
+ CubWidget::headerScript();
+ CubWidget::menu();
+ CubWidget::app();
+ // Footer script will be configured with your application's public key
+ CubWidget::footerScript();
  ```
 
 ## Configuration
@@ -225,3 +238,4 @@ return array(
 [link-downloads]: https://packagist.org/packages/cub/cub-laravel
 [link-built-for]: http://laravel.com
 [link-cub-php]: https://packagist.org/packages/cub/cub
+[link-cub-widget-docs]: https://github.com/praetoriandigital/cub-docs
