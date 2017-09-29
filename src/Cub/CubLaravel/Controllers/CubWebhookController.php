@@ -18,10 +18,7 @@ class CubWebhookController extends Controller
      */
     public function receive()
     {
-        // Handle json data
-        // TODO: Update with real payload key
-        $jsonData = Input::get('payload', json_encode([]));
-        $object = Cub_Object::fromJson($jsonData);
+        $object = Cub_Object::fromJson($HTTP_RAW_POST_DATA);
 
         if ($object instanceof Cub_User) {
             try {
