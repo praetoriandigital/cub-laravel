@@ -8,7 +8,7 @@ class CubWebhookTest extends CubLaravelTestCase
     public function webhook_url_is_registered()
     {
         $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'payload' => json_encode([
+            json_encode([
                 'object' => 'User',
                 'id' => $this->details['id'],
                 'first_name' => '',
@@ -24,7 +24,7 @@ class CubWebhookTest extends CubLaravelTestCase
     public function new_cub_user_creates_application_user()
     {
         $expectedResponse = [
-            'code' => 200,
+            'code' => 201,
             'content' => json_encode(['message' => 'user_created']),
         ];
         $expectedCubId = 'usr_kjhdi7y3u4rkjsk';
@@ -34,7 +34,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedUsername = 'lukie1';
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'payload' => json_encode([
+            json_encode([
                 'object' => 'User',
                 'id' => $expectedCubId,
                 'first_name' => $expectedFirstName,
@@ -68,7 +68,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedUsername = 'lukie1';
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'payload' => json_encode([
+            json_encode([
                 'object' => 'User',
                 'id' => $this->details['id'],
                 'first_name' => $expectedFirstName,
@@ -98,7 +98,7 @@ class CubWebhookTest extends CubLaravelTestCase
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'payload' => json_encode([
+            json_encode([
                 'object' => 'User',
                 'id' => $this->details['id'],
                 'first_name' => '',
@@ -125,7 +125,7 @@ class CubWebhookTest extends CubLaravelTestCase
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'payload' => json_encode([
+            json_encode([
                 'object' => 'Group',
                 'id' => 'grp_jhakjhwk4esjkjahs',
                 'deleted' => false,

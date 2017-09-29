@@ -18,7 +18,7 @@ class CubWebhookController extends Controller
      */
     public function receive()
     {
-        $object = Cub_Object::fromJson($HTTP_RAW_POST_DATA);
+        $object = Cub_Object::fromJson(Input::all()[0]);
 
         if ($object instanceof Cub_User) {
             try {
@@ -36,7 +36,7 @@ class CubWebhookController extends Controller
                 }
             } catch (UserNotFoundByCubIdException $e) {
                 if (Cub::createUser($object)) {
-                    return $this->respondJSON('user_created', 200);
+                    return $this->respondJSON('user_created', 201);
                 }
                 return $this->respondJSON('error_creating_user', 500);
             } catch (Exception $e) {

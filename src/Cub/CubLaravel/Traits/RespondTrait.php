@@ -13,6 +13,12 @@ trait RespondTrait
      */
     protected function respondJSON($message, $status)
     {
-        return Response::json([($status == 200 ? 'message' : 'error') => $message], $status);
+        if ($status === 200 || $status === 201) {
+            $key = 'message';
+        } else {
+            $key = 'error';
+        }
+
+        return Response::json([$key => $message], $status);
     }
 }
