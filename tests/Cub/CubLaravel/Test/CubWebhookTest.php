@@ -1,5 +1,6 @@
 <?php namespace Cub\CubLaravel\Test;
 
+use Carbon\Carbon;
 use Cub\CubLaravel\Test\Models\User;
 
 class CubWebhookTest extends CubLaravelTestCase
@@ -8,15 +9,14 @@ class CubWebhookTest extends CubLaravelTestCase
     public function webhook_url_is_registered()
     {
         $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            json_encode([
-                'object' => 'User',
-                'id' => $this->details['id'],
-                'first_name' => '',
-                'last_name' => '',
-                'email' => '',
-                'username' => '',
-                'deleted' => false,
-            ]),
+            'object' => 'User',
+            'id' => $this->details['id'],
+            'first_name' => '',
+            'last_name' => '',
+            'email' => '',
+            'username' => '',
+            'last_login' => '',
+            'deleted' => false,
         ]);
     }
 
@@ -32,17 +32,17 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedLastName = 'Skywalker';
         $expectedEmail = 'luke@lukeskywalker.com';
         $expectedUsername = 'lukie1';
+        $lastLogin = '2017-09-29T17:39:23Z';
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            json_encode([
-                'object' => 'User',
-                'id' => $expectedCubId,
-                'first_name' => $expectedFirstName,
-                'last_name' => $expectedLastName,
-                'email' => $expectedEmail,
-                'username' => $expectedUsername,
-                'deleted' => false,
-            ]),
+            'object' => 'User',
+            'id' => $expectedCubId,
+            'first_name' => $expectedFirstName,
+            'last_name' => $expectedLastName,
+            'email' => $expectedEmail,
+            'username' => $expectedUsername,
+            'last_login' => $lastLogin,
+            'deleted' => false,
         ]);
 
         $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
@@ -53,6 +53,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $this->assertEquals($expectedLastName, $user->last_name);
         $this->assertEquals($expectedEmail, $user->email);
         $this->assertEquals($expectedUsername, $user->username);
+        $this->assertEquals(Carbon::parse($lastLogin)->setTimezone('UTC'), $user->last_login);
     }
 
     /** @test */
@@ -66,17 +67,17 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedLastName = 'Skywalker';
         $expectedEmail = 'luke@lukeskywalker.com';
         $expectedUsername = 'lukie1';
+        $lastLogin = '2017-09-29T17:39:23Z';
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            json_encode([
-                'object' => 'User',
-                'id' => $this->details['id'],
-                'first_name' => $expectedFirstName,
-                'last_name' => $expectedLastName,
-                'email' => $expectedEmail,
-                'username' => $expectedUsername,
-                'deleted' => false,
-            ]),
+            'object' => 'User',
+            'id' => $this->details['id'],
+            'first_name' => $expectedFirstName,
+            'last_name' => $expectedLastName,
+            'email' => $expectedEmail,
+            'username' => $expectedUsername,
+            'last_login' => $lastLogin,
+            'deleted' => false,
         ]);
 
         $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
@@ -87,6 +88,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $this->assertEquals($expectedLastName, $user->last_name);
         $this->assertEquals($expectedEmail, $user->email);
         $this->assertEquals($expectedUsername, $user->username);
+        $this->assertEquals(Carbon::parse($lastLogin)->setTimezone('UTC'), $user->last_login);
     }
 
     /** @test */
@@ -98,15 +100,14 @@ class CubWebhookTest extends CubLaravelTestCase
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            json_encode([
-                'object' => 'User',
-                'id' => $this->details['id'],
-                'first_name' => '',
-                'last_name' => '',
-                'email' => '',
-                'username' => '',
-                'deleted' => true,
-            ]),
+            'object' => 'User',
+            'id' => $this->details['id'],
+            'first_name' => '',
+            'last_name' => '',
+            'email' => '',
+            'username' => '',
+            'last_login' => '2017-09-29T17:39:23Z',
+            'deleted' => true,
         ]);
 
         $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
@@ -125,11 +126,9 @@ class CubWebhookTest extends CubLaravelTestCase
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            json_encode([
-                'object' => 'Group',
-                'id' => 'grp_jhakjhwk4esjkjahs',
-                'deleted' => false,
-            ]),
+            'object' => 'Group',
+            'id' => 'grp_jhakjhwk4esjkjahs',
+            'deleted' => false,
         ]);
 
         $this->assertEquals($expectedResponse['code'], $response->getStatusCode());

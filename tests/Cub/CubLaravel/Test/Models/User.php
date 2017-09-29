@@ -10,5 +10,8 @@ class User extends Model
         'last_name',
         'email',
         'username',
+        'last_login',
     ];
+
+    protected $dates = ['last_login'];
 }

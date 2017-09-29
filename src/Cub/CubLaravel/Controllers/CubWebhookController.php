@@ -18,7 +18,7 @@ class CubWebhookController extends Controller
      */
     public function receive()
     {
-        $object = Cub_Object::fromJson(Input::all()[0]);
+        $object = Cub_Object::fromJson(json_encode(Input::all()));
 
         if ($object instanceof Cub_User) {
             try {

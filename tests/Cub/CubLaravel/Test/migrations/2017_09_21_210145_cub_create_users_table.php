@@ -19,6 +19,7 @@ class CubCreateUsersTable extends Migration
             $table->string('last_name');
             $table->string('username');
             $table->string('email');
+            $table->timestamp('last_login')->nullable()->default(NULL);
             $table->timestamps();
             $table->softDeletes();
         });

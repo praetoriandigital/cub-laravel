@@ -1,12 +1,13 @@
 <?php namespace Cub\CubLaravel;
 
+use Carbon\Carbon;
 use Config;
+use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
+use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 use Cub_User;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
-use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
 
 class Cub
 {
@@ -239,7 +240,11 @@ class Cub
             $attributes = [];
             foreach ($fields as $cubField => $appField) {
                 if (in_array($appField, $this->user['fillable'])) {
-                    $attributes[$appField] = $cubUser->{$cubField};
+                    $value = $cubUser->{$cubField};
+                    if (in_array($appField, $this->user->getDates())) {
+                        $value = Carbon::parse($value)->setTimezone('UTC');
+                    }
+                    $attributes[$appField] = $value;
                 }
             }
             if (count($attributes)) {
@@ -262,8 +267,12 @@ class Cub
         if (is_array($fields)) {
             $updates = [];
             foreach ($fields as $cubField => $appField) {
-                if (in_array($appField, array_keys($appUser['attributes']))) {
-                    $updates[$appField] = $cubUser->{$cubField};
+                if (in_array($appField, $this->user['fillable'])) {
+                    $value = $cubUser->{$cubField};
+                    if (in_array($appField, $this->user->getDates())) {
+                        $value = Carbon::parse($value)->setTimezone('UTC');
+                    }
+                    $updates[$appField] = $value;
                 }
             }
             if (count($updates)) {
