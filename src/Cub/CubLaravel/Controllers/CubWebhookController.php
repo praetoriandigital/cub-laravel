@@ -18,10 +18,10 @@ class CubWebhookController extends Controller
      */
     public function receive()
     {
-        $object = Cub_Object::fromJson(json_encode(Input::all()));
+        try {
+            $object = Cub_Object::fromJson(json_encode(Input::all()));
 
-        if ($object instanceof Cub_User) {
-            try {
+            if ($object instanceof Cub_User) {
                 $user = Cub::getUserById($object->id);
                 if ($object->deleted) {
                     if (Cub::deleteUser($user)) {
@@ -34,16 +34,15 @@ class CubWebhookController extends Controller
                     }
                     return $this->respondJSON('error_updating_user', 500);
                 }
-            } catch (UserNotFoundByCubIdException $e) {
-                if (Cub::createUser($object)) {
-                    return $this->respondJSON('user_created', 201);
-                }
-                return $this->respondJSON('error_creating_user', 500);
-            } catch (Exception $e) {
-                return $this->respondJSON('internal_error', 500);
             }
+            return $this->respondJSON('nothing_to_update_or_create', 200);
+        } catch (UserNotFoundByCubIdException $e) {
+            if (Cub::createUser($object)) {
+                return $this->respondJSON('user_created', 201);
+            }
+            return $this->respondJSON('error_creating_user', 500);
+        } catch (Exception $e) {
+            return $this->respondJSON('internal_error', 500);
         }
-
-        return $this->respondJSON('nothing_to_update_or_create', 200);
     }
 }
