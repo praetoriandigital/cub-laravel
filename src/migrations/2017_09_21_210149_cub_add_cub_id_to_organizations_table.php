@@ -5,6 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class CubAddCubIdToOrganizationsTable extends Migration
 {
+    const CUB_ID = 'cub_id';
 
     /**
      * Run the migrations.
@@ -14,15 +15,15 @@ class CubAddCubIdToOrganizationsTable extends Migration
     public function up()
     {
         $tableName = App::make(Config::get('cub::config.maps.cub_organization.model'))->table;
-        if (Schema::hasTable($tableName)) {
+        if (Schema::hasTable($tableName) && !Schema::hasColumn($tableName, self::CUB_ID)) {
             Schema::table($tableName, function (Blueprint $table) {
-                $table->string('cub_id')->after('id')->default('');
+                $table->string(self::CUB_ID)->after('id')->default('');
             });
 
-            DB::statement('update '.$tableName.' set cub_id = id');
+            DB::statement('update '.$tableName.' set '.self::CUB_ID.' = id');
 
             Schema::table($tableName, function (Blueprint $table) {
-                $table->unique('cub_id');
+                $table->unique(self::CUB_ID);
             });
         }
     }
@@ -35,9 +36,9 @@ class CubAddCubIdToOrganizationsTable extends Migration
     public function down()
     {
         $tableName = App::make(Config::get('cub::config.maps.cub_organization.model'))->table;
-        if (Schema::hasTable($tableName)) {
+        if (Schema::hasTable($tableName) && Schema::hasColumn($tableName, self::CUB_ID)) {
             Schema::table($tableName, function (Blueprint $table) {
-                $table->dropColumn('cub_id');
+                $table->dropColumn(self::CUB_ID);
             });
         }
     }
