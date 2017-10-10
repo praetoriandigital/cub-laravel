@@ -3,7 +3,8 @@
 use Carbon\Carbon;
 use Config;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
-use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
+use Cub_Object;
 use Cub_User;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
@@ -14,11 +15,6 @@ class Cub
     const ALGO = 'HS256';
     const CUB_ID_KEY = 'user';
     const CUB_COOKIE = 'cubUserToken';
-
-    /**
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $user;
 
     /**
      * @var \Illuminate\Http\Request
@@ -32,12 +28,10 @@ class Cub
     /**
      * Cub constructor.
      *
-     * @param \Illuminate\Database\Eloquent\Model $user
      * @param \Illuminate\Http\Request $request
      */
-    public function __construct(Model $user, Request $request)
+    public function __construct(Request $request)
     {
-        $this->user = $user;
         $this->request = $request;
     }
 
@@ -126,15 +120,25 @@ class Cub
      * @param $cubId
      *
      * @return \Illuminate\Database\Eloquent\Model
-     * @throws UserNotFoundByCubIdException
      */
     public function getUserById($cubId)
     {
-        $user = $this->user->whereCubId($cubId)->first();
-        if (!$user) {
-            throw new UserNotFoundByCubIdException($cubId);
+        return $this->getObjectById(strtolower(Cub_User::class), $cubId);
+    }
+
+    /**
+     * @param $cubId
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     * @throws ObjectNotFoundByCubIdException
+     */
+    public function getObjectById($objectType, $cubId)
+    {
+        $object = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'))->whereCubId($cubId)->first();
+        if (!$object) {
+            throw new ObjectNotFoundByCubIdException($cubId);
         }
-        return $user;
+        return $object;
     }
 
     /**
@@ -150,7 +154,7 @@ class Cub
 
         $decoded = (array) JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
 
-        $this->setCurrent($this->getUserById($decoded[self::CUB_ID_KEY]), $token);
+        $this->setCurrent($this->getObjectById(strtolower(Cub_User::class), $decoded[self::CUB_ID_KEY]), $token);
 
         return $this->currentUser();
     }
@@ -229,26 +233,28 @@ class Cub
     }
 
     /**
-     * @param Cub_User $cubUser
+     * @param Cub_Object $cubObject
      *
      * @return bool
      */
-    public function createUser(Cub_User $cubUser)
+    public function createObject(Cub_Object $cubObject)
     {
-        $fields = Config::get('cub::config.fields');
+        $objectType = strtolower(get_class($cubObject));
+        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
+        $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
         if (is_array($fields)) {
             $attributes = [];
             foreach ($fields as $cubField => $appField) {
-                if (in_array($appField, $this->user['fillable'])) {
-                    $value = $cubUser->{$cubField};
-                    if (in_array($appField, $this->user->getDates())) {
+                if (in_array($appField, $model['fillable'])) {
+                    $value = $cubObject->{$cubField};
+                    if (in_array($appField, $model->getDates())) {
                         $value = Carbon::parse($value)->setTimezone('UTC');
                     }
                     $attributes[$appField] = $value;
                 }
             }
             if (count($attributes)) {
-                return (bool) $this->user->create($attributes);
+                return (bool) $model->create($attributes);
             }
         }
 
@@ -256,27 +262,29 @@ class Cub
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $appUser
-     * @param Cub_User $cubUser
+     * @param Cub_Object $cubObject
      *
      * @return bool
      */
-    public function updateUser(Model $appUser, Cub_User $cubUser)
+    public function updateObject(Cub_Object $cubObject)
     {
-        $fields = Config::get('cub::config.fields');
+        $objectType = strtolower(get_class($cubObject));
+        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
+        $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
+        $appObject = $this->getObjectById($objectType, $cubObject->id);
         if (is_array($fields)) {
             $updates = [];
             foreach ($fields as $cubField => $appField) {
-                if (in_array($appField, $this->user['fillable'])) {
-                    $value = $cubUser->{$cubField};
-                    if (in_array($appField, $this->user->getDates())) {
+                if (in_array($appField, $model['fillable'])) {
+                    $value = $cubObject->{$cubField};
+                    if (in_array($appField, $model->getDates())) {
                         $value = Carbon::parse($value)->setTimezone('UTC');
                     }
                     $updates[$appField] = $value;
                 }
             }
             if (count($updates)) {
-                return $appUser->update($updates);
+                return $appObject->update($updates);
             }
         }
 
@@ -284,12 +292,14 @@ class Cub
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model $appUser
+     * @param Cub_Object $cubObject
      *
      * @return bool
      */
-    public function deleteUser(Model $appUser)
+    public function deleteObject(Cub_Object $cubObject)
     {
-        return $appUser->delete();
+        $objectType = strtolower(get_class($cubObject));
+        $appObject = $this->getObjectById($objectType, $cubObject->id);
+        return $appObject->delete();
     }
 }

@@ -2,7 +2,7 @@
 
 use Cub;
 use Firebase\JWT\JWT;
-use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Test\Models\User;
 
 class CubLaravelTest extends CubLaravelTestCase
@@ -13,7 +13,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = $login->getUser();
 
-        $this->assertInstanceOf($this->app['config']->get('cub::config.user'), $user);
+        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.cub_user.model'), $user);
         $this->assertEquals($user->email, $this->credentials['username']);
     }
 
@@ -23,7 +23,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = Cub::currentUser();
 
-        $this->assertInstanceOf($this->app['config']->get('cub::config.user'), $user);
+        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.cub_user.model'), $user);
         $this->assertEquals($login->getUser(), $user);
     }
 
@@ -63,7 +63,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
     /**
      * @test
-     * @expectedException \Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException
+     * @expectedException \Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException
      */
     public function exception_thrown_when_cub_user_is_not_application_user()
     {
@@ -82,7 +82,7 @@ class CubLaravelTest extends CubLaravelTestCase
 
     /**
      * @test
-     * @expectedException \Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException
+     * @expectedException \Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException
      */
     public function exception_thrown_when_no_cub_user_id()
     {
@@ -92,11 +92,11 @@ class CubLaravelTest extends CubLaravelTestCase
     /** @test */
     public function no_cub_user_id_exception_method_is_descript()
     {
-        $expected = 'User not found with Cub user id {empty_string}';
+        $expected = 'Object not found with Cub id {empty_string}';
         $actual = '';
         try {
             Cub::getUserById('');
-        } catch (UserNotFoundByCubIdException $e) {
+        } catch (ObjectNotFoundByCubIdException $e) {
             $actual = $e->getMessage();
         }
         $this->assertEquals($expected, $actual);

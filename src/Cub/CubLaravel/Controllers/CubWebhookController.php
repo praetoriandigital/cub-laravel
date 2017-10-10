@@ -2,10 +2,9 @@
 
 use Config;
 use Cub;
-use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Traits\RespondTrait;
 use Cub_Object;
-use Cub_User;
 use Illuminate\Routing\Controller;
 use Input;
 
@@ -21,26 +20,25 @@ class CubWebhookController extends Controller
         try {
             $object = Cub_Object::fromJson(json_encode(Input::all()));
 
-            if ($object instanceof Cub_User) {
-                $user = Cub::getUserById($object->id);
+            if (in_array(strtolower(get_class($object)), array_keys(Config::get('cub::config.maps')))) {
                 if ($object->deleted) {
-                    if (Cub::deleteUser($user)) {
-                        return $this->respondJSON('user_deleted', 200);    
+                    if (Cub::deleteObject($object)) {
+                        return $this->respondJSON('deleted', 200);
                     }
-                    return $this->respondJSON('error_deleting_user', 500);
+                    return $this->respondJSON('error_deleting', 500);
                 } else {
-                    if (Cub::updateUser($user, $object)) {
-                        return $this->respondJSON('user_updated', 200);    
+                    if (Cub::updateObject($object)) {
+                        return $this->respondJSON('updated', 200);    
                     }
-                    return $this->respondJSON('error_updating_user', 500);
+                    return $this->respondJSON('error_updating', 500);
                 }
             }
             return $this->respondJSON('nothing_to_update_or_create', 200);
-        } catch (UserNotFoundByCubIdException $e) {
-            if (Cub::createUser($object)) {
-                return $this->respondJSON('user_created', 201);
+        } catch (ObjectNotFoundByCubIdException $e) {
+            if (Cub::createObject($object)) {
+                return $this->respondJSON('created', 201);
             }
-            return $this->respondJSON('error_creating_user', 500);
+            return $this->respondJSON('error_creating', 500);
         } catch (Exception $e) {
             return $this->respondJSON('internal_error', 500);
         }

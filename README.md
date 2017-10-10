@@ -40,12 +40,21 @@ Next make sure to add the Cub alias in the `aliases` array in the same `config/a
 'CubWidget' => Cub\CubLaravel\Facades\CubWidget::class,
 ```
 
-Next add the `cub_id` field to your Users table with the following command:
+Next add the `cub_id` field to your relevant Models with the following command:
 ```php
 php artisan migrate --package="cub/cub-laravel"
 ```
 
-IMPORTANT: You will need to update your users table with each users's corresponding Cub user id.
+Add `cub_id` to the relevant Models's `$fillable` array:
+```php
+    public $fillable = [
+        ...
+        'cub_id',
+        ...
+    ];
+```
+
+IMPORTANT: You will need to make sure to trigger the Cub webhook for the relevant Models.
 
 ## Usage
 
@@ -193,35 +202,165 @@ return array(
     
     /*
     |--------------------------------------------------------------------------
-    | Application User Model
+    | Cub Object Mapping
     |--------------------------------------------------------------------------
     |
-    | This is the user model which will be returned.
+    | This is where you will configure how Cub objects map
+    | to your application Models
     |
     */
-    
-    'user' => 'App\User', // update to the fully qualified namespace of your user model
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Application User Model Fields Map
-    |--------------------------------------------------------------------------
-    |
-    | This is where the mapping of the Cub User keys can
-    | be mapped to the fields on your User model.
-    | i.e. 'cub_field' => 'application_field',
-    |
-    */
-    
-    // update the values of this array with the corresponding
-    // fields on your User model or comment them out
-    // to ignore them
-    'fields' => [
-        'id' => 'cub_id',
-        'first_name' => 'first_name',
-        'last_name' => 'last_name',
-        'email' => 'email',
-        'username' => 'username',
+
+    'maps' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | User Mapping Information
+        |--------------------------------------------------------------------------
+        */
+
+        'cub_user' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application User Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the user model which will be returned.
+            |
+            */
+
+            'model' => 'App\User',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application User Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub User keys can
+            | be mapped to the fields on your User model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                // update the values of this array with the corresponding
+                // fields on your User model or comment them out
+                // to ignore them
+                'birth_date' => 'birth_date',
+                'date_joined' => 'date_joined',
+                'email' => 'email',
+                'email_confirmed' => 'email_confirmed',
+                'first_name' => 'first_name',
+                'gender' => 'gender',
+                'id' => 'cub_id',
+                'invalid_email' => 'invalid_email',
+                'invitation_last_sent_on' => 'invitation_last_sent_on',
+                'invitation_sent_count' => 'invitation_sent_count',
+                'last_login' => 'last_login',
+                'last_name' => 'last_name',
+                'middle_name' => 'middle_name',
+                'original_username' => 'original_username',
+                'password_change_required' => 'password_change_required',
+                'photo_large' => 'photo_large',
+                'photo_small' => 'photo_small',
+                'purchasing_role_buy_for_organization' => 'purchasing_role_buy_for_organization',
+                'purchasing_role_buy_for_self_only' => 'purchasing_role_buy_for_self_only',
+                'purchasing_role_recommend' => 'purchasing_role_recommend',
+                'purchasing_role_specify_for_organization' => 'purchasing_role_specify_for_organization',
+                'registration_site' => 'registration_site',
+                'retired' => 'retired',
+                'token' => 'token',
+                'username' => 'username',
+            ],
+        ],
+
+        'cub_organization' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Organization Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the organization model which will be returned.
+            |
+            */
+
+            'model' => 'App\Organization',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Organization Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub Organization keys can
+            | be mapped to the fields on your Organization model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                // update the values of this array with the corresponding
+                // fields on your Organization model or comment them out
+                // to ignore them
+                'name' => 'name',
+                'employees' => 'employees',
+                'tags' => 'tags',
+                'country' => 'country',
+                'state' => 'state',
+                'city' => 'city',
+                'county' => 'county',
+                'postal_code' => 'postal_code',
+                'address' => 'address',
+                'phone' => 'phone',
+                'hr_phone' => 'hr_phone',
+                'fax' => 'fax',
+                'website' => 'website',
+                'created' => 'created',
+                'logo' => 'logo',
+            ],
+        ],
+
+        'cub_member' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Member Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the member model which will be returned.
+            |
+            */
+
+            'model' => 'App\Member',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Member Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub Member keys can
+            | be mapped to the fields on your Member model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                // update the values of this array with the corresponding
+                // fields on your Member model or comment them out
+                // to ignore them
+                'organization' => 'organization',
+                'user' => 'user',
+                'invitation' => 'invitation',
+                'personal_id' => 'personal_id',
+                'post_id' => 'post_id',
+                'notes' => 'notes',
+                'is_active' => 'is_active',
+                'is_admin' => 'is_admin',
+                'positions' => 'positions',
+                'group_membership' => 'group_membership',
+                'created' => 'created',
+            ],
+        ],
     ],
     
 );

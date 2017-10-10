@@ -1,7 +1,7 @@
 <?php namespace Cub\CubLaravel;
 
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
-use Cub\CubLaravel\Exceptions\UserNotFoundByCubIdException;
+use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Traits\RespondTrait;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
@@ -41,7 +41,7 @@ class CubAuthFilter
 
         try {
             $this->cub->getUserByJWT($token);
-        } catch (UserNotFoundByCubIdException $e) {
+        } catch (ObjectNotFoundByCubIdException $e) {
             return $this->respondJSON('user_not_found', 404);
         } catch (ExpiredException $e) {
             return $this->respondJSON('expired_token', 401);

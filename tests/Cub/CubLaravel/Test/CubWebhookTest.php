@@ -1,6 +1,7 @@
 <?php namespace Cub\CubLaravel\Test;
 
 use Carbon\Carbon;
+use Cub\CubLaravel\Test\Models\Organization;
 use Cub\CubLaravel\Test\Models\User;
 
 class CubWebhookTest extends CubLaravelTestCase
@@ -25,7 +26,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 201,
-            'content' => json_encode(['message' => 'user_created']),
+            'content' => json_encode(['message' => 'created']),
         ];
         $expectedCubId = 'usr_kjhdi7y3u4rkjsk';
         $expectedFirstName = 'Luke';
@@ -61,7 +62,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'user_updated']),
+            'content' => json_encode(['message' => 'updated']),
         ];
         $expectedFirstName = 'Luke';
         $expectedLastName = 'Skywalker';
@@ -96,7 +97,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'user_deleted']),
+            'content' => json_encode(['message' => 'deleted']),
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
@@ -119,6 +120,44 @@ class CubWebhookTest extends CubLaravelTestCase
 
     /** @test */
     public function updated_cub_object_other_than_user_returns_correct_response()
+    {
+        $expectedResponse = [
+            'code' => 200,
+            'content' => json_encode(['message' => 'updated']),
+        ];
+
+        $expectedName = 'Updated Testy';
+
+        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+            'object' => 'Organization',
+            'id' => 'org_jhakjhwk4esjkjahs',
+            'name' => $expectedName,
+            'employees' => '',
+            'tags' => '',
+            'country' => '',
+            'state' => '',
+            'city' => '',
+            'county' => '',
+            'postal_code' => '',
+            'address' => '',
+            'phone' => '',
+            'hr_phone' => '',
+            'fax' => '',
+            'website' => '',
+            'created' => '',
+            'logo' => '',
+            'deleted' => false,
+        ]);
+
+        $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
+        $this->assertEquals($expectedResponse['content'], $response->getContent());
+
+        $org = Organization::whereCubId('org_jhakjhwk4esjkjahs')->first();
+        $this->assertEquals($expectedName, $org->name);
+    }
+
+    /** @test */
+    public function updated_untracked_cub_object_returns_correct_response()
     {
         $expectedResponse = [
             'code' => 200,

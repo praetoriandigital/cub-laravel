@@ -29,9 +29,9 @@ abstract class CubLaravelTestCase extends TestCase
             'password' => 'SJW8Gg',
         ];
 
+        $this->modifyConfiguration($this->app);
         $this->prepareDatabase();
         $this->prepareRoutes();
-        $this->modifyConfiguration($this->app);
     }
 
     /**
@@ -71,6 +71,16 @@ abstract class CubLaravelTestCase extends TestCase
     }
 
     /**
+     * Perform user specific configuration.
+     */
+    protected function modifyConfiguration($app)
+    {
+        $app['config']->set('cub::config.maps.cub_user.model', 'Cub\CubLaravel\Test\Models\User');
+        $app['config']->set('cub::config.maps.cub_organization.model', 'Cub\CubLaravel\Test\Models\Organization');
+        $app['config']->set('cub::config.maps.cub_member.model', 'Cub\CubLaravel\Test\Models\Member');
+    }
+
+    /**
      * Migrate the database and update seeded data.
      */
     protected function prepareDatabase()
@@ -89,6 +99,7 @@ abstract class CubLaravelTestCase extends TestCase
 
         // Update our user to have a correct cub_id
         DB::table('users')->where('id', 1)->update(['cub_id' => $this->details['id']]);
+        DB::table('organizations')->where('id', 1)->update(['cub_id' => 'org_jhakjhwk4esjkjahs']);
     }
 
     /**
@@ -101,13 +112,5 @@ abstract class CubLaravelTestCase extends TestCase
         }]);
 
         $this->app['router']->enableFilters();
-    }
-
-    /**
-     * Perform user specific configuration.
-     */
-    protected function modifyConfiguration($app)
-    {
-        $app['config']->set('cub::config.user', 'Cub\CubLaravel\Test\Models\User');
     }
 }

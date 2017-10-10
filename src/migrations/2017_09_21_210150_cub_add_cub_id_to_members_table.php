@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CubAddCubIdToUsersTable extends Migration
+class CubAddCubIdToMembersTable extends Migration
 {
 
     /**
@@ -13,7 +13,7 @@ class CubAddCubIdToUsersTable extends Migration
      */
     public function up()
     {
-        $tableName = App::make(Config::get('cub::config.maps.cub_user.model'))->table;
+        $tableName = App::make(Config::get('cub::config.maps.cub_member.model'))->table;
         if (Schema::hasTable($tableName)) {
             Schema::table($tableName, function (Blueprint $table) {
                 $table->string('cub_id')->after('id')->default('');
@@ -34,7 +34,7 @@ class CubAddCubIdToUsersTable extends Migration
      */
     public function down()
     {
-        $tableName = App::make(Config::get('cub::config.maps.cub_user.model'))->table;
+        $tableName = App::make(Config::get('cub::config.maps.cub_member.model'))->table;
         if (Schema::hasTable($tableName)) {
             Schema::table($tableName, function (Blueprint $table) {
                 $table->dropColumn('cub_id');
