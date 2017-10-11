@@ -14,17 +14,19 @@ class CubAddCubIdToMembersTable extends Migration
      */
     public function up()
     {
-        $tableName = App::make(Config::get('cub::config.maps.cub_member.model'))->table;
-        if (Schema::hasTable($tableName) && !Schema::hasColumn($tableName, self::CUB_ID)) {
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->string(self::CUB_ID)->after('id')->default('');
-            });
+        if ($modelName = Config::get('cub::config.maps.cub_member.model')) {
+            $tableName = App::make($modelName)->getTable();
+            if (Schema::hasTable($tableName) && !Schema::hasColumn($tableName, self::CUB_ID)) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->string(self::CUB_ID)->after('id')->default('');
+                });
 
-            DB::statement('update '.$tableName.' set '.self::CUB_ID.' = id');
+                DB::statement('update '.$tableName.' set '.self::CUB_ID.' = id');
 
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->unique(self::CUB_ID);
-            });
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->unique(self::CUB_ID);
+                });
+            }
         }
     }
 
@@ -35,11 +37,13 @@ class CubAddCubIdToMembersTable extends Migration
      */
     public function down()
     {
-        $tableName = App::make(Config::get('cub::config.maps.cub_member.model'))->table;
-        if (Schema::hasTable($tableName) && Schema::hasColumn($tableName, self::CUB_ID)) {
-            Schema::table($tableName, function (Blueprint $table) {
-                $table->dropColumn(self::CUB_ID);
-            });
+        if ($modelName = Config::get('cub::config.maps.cub_member.model')) {
+            $tableName = App::make($modelName)->getTable();
+            if (Schema::hasTable($tableName) && Schema::hasColumn($tableName, self::CUB_ID)) {
+                Schema::table($tableName, function (Blueprint $table) {
+                    $table->dropColumn(self::CUB_ID);
+                });
+            }
         }
     }
 }

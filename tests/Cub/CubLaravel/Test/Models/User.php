@@ -4,8 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class User extends Model
 {
-    public $table = 'users';
-    
+    protected $table = 'users';
+
     public $fillable = [
         'cub_id',
         'first_name',

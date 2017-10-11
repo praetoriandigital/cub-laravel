@@ -4,7 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Member extends Model
 {
-    public $table = 'members';
+    protected $table = 'members';
 
     public $fillable = [
         'organization',
