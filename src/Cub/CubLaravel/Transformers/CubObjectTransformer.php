@@ -82,7 +82,9 @@ class CubObjectTransformer implements CubTransformer
      */
     public function update()
     {
-        $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        if (!$this->appObject) {
+            $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        }
         if (!empty($this->fields)) {
             $updates = [];
             foreach ($this->fields as $cubField => $appField) {
@@ -107,7 +109,9 @@ class CubObjectTransformer implements CubTransformer
      */
     public function delete()
     {
-        $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        if (!$this->appObject) {
+            $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        }
         return $this->appObject->delete();
     }
 }
