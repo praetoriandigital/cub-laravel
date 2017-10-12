@@ -79,6 +79,18 @@ return array(
 
             /*
             |--------------------------------------------------------------------------
+            | Application User Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your User Models.
+            |
+            */
+
+            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
             | Application User Model Fields Map
             |--------------------------------------------------------------------------
             |
@@ -132,6 +144,18 @@ return array(
 
             /*
             |--------------------------------------------------------------------------
+            | Application Organization Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your Organization Models.
+            |
+            */
+
+            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
             | Application Organization Model Fields Map
             |--------------------------------------------------------------------------
             |
@@ -142,6 +166,7 @@ return array(
             */
 
             'fields' => [
+                'id' => 'cub_id',
                 'name' => 'name',
                 'employees' => 'employees',
                 'tags' => 'tags',
@@ -175,6 +200,18 @@ return array(
 
             /*
             |--------------------------------------------------------------------------
+            | Application Member Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your Member Models.
+            |
+            */
+
+            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
             | Application Member Model Fields Map
             |--------------------------------------------------------------------------
             |
@@ -185,6 +222,7 @@ return array(
             */
 
             'fields' => [
+                'id' => 'cub_id',
                 'organization' => 'organization',
                 'user' => 'user',
                 'invitation' => 'invitation',

@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Config;
+use Cub\CubLaravel\Contracts\CubTransformer;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub_Object;
@@ -17,6 +18,11 @@ class Cub
     const CUB_COOKIE = 'cubUserToken';
 
     /**
+     * @var \Cub\CubLaravel\Contracts\CubTransformer
+     */
+    protected $transformer;
+
+    /**
      * @var \Illuminate\Http\Request
      */
     protected $request;
@@ -28,10 +34,12 @@ class Cub
     /**
      * Cub constructor.
      *
+     * @param \Cub\CubLaravel\Contracts\CubTransformer $transformer
      * @param \Illuminate\Http\Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(CubTransformer $transformer, Request $request)
     {
+        $this->transformer = $transformer;
         $this->request = $request;
     }
 
@@ -239,26 +247,11 @@ class Cub
      */
     public function createObject(Cub_Object $cubObject)
     {
-        $objectType = strtolower(get_class($cubObject));
-        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
-        $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
-        if (is_array($fields)) {
-            $attributes = [];
-            foreach ($fields as $cubField => $appField) {
-                if (in_array($appField, $model['fillable'])) {
-                    $value = $cubObject->{$cubField};
-                    if (in_array($appField, $model->getDates())) {
-                        $value = Carbon::parse($value)->setTimezone('UTC');
-                    }
-                    $attributes[$appField] = $value;
-                }
-            }
-            if (count($attributes)) {
-                return (bool) $model->create($attributes);
-            }
+        if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
+            return app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'))->create($cubObject);
         }
 
-        return false;
+        return $this->transformer->create($cubObject);
     }
 
     /**
@@ -268,27 +261,11 @@ class Cub
      */
     public function updateObject(Cub_Object $cubObject)
     {
-        $objectType = strtolower(get_class($cubObject));
-        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
-        $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
-        $appObject = $this->getObjectById($objectType, $cubObject->id);
-        if (is_array($fields)) {
-            $updates = [];
-            foreach ($fields as $cubField => $appField) {
-                if (in_array($appField, $model['fillable'])) {
-                    $value = $cubObject->{$cubField};
-                    if (in_array($appField, $model->getDates())) {
-                        $value = Carbon::parse($value)->setTimezone('UTC');
-                    }
-                    $updates[$appField] = $value;
-                }
-            }
-            if (count($updates)) {
-                return $appObject->update($updates);
-            }
+        if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
+            return app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'))->update($cubObject);
         }
 
-        return false;
+        return $this->transformer->update($cubObject);
     }
 
     /**
@@ -298,8 +275,10 @@ class Cub
      */
     public function deleteObject(Cub_Object $cubObject)
     {
-        $objectType = strtolower(get_class($cubObject));
-        $appObject = $this->getObjectById($objectType, $cubObject->id);
-        return $appObject->delete();
+        if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
+            return app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'))->delete($cubObject);
+        }
+
+        return $this->transformer->delete($cubObject);
     }
 }

@@ -25,7 +25,7 @@ class CubWebhookTest extends CubLaravelTestCase
     public function new_cub_user_creates_application_user()
     {
         $expectedResponse = [
-            'code' => 201,
+            'code' => 200,
             'content' => json_encode(['message' => 'created']),
         ];
         $expectedCubId = 'usr_kjhdi7y3u4rkjsk';

@@ -1,7 +1,7 @@
 <?php namespace Cub\CubLaravel;
 
-use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Cub_Config;
+use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -43,7 +43,7 @@ class ServiceProvider extends BaseServiceProvider
         });
 
         $this->app->bind('cub', function ($app) {
-            return new Cub($app['request']);
+            return new Cub(new CubObjectTransformer, $app['request']);
         });
 
         $this->app->bind('cub-widget', function ($app) {

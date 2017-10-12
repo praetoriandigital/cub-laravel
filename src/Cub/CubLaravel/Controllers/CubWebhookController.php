@@ -36,7 +36,7 @@ class CubWebhookController extends Controller
             return $this->respondJSON('nothing_to_update_or_create', 200);
         } catch (ObjectNotFoundByCubIdException $e) {
             if (Cub::createObject($object)) {
-                return $this->respondJSON('created', 201);
+                return $this->respondJSON('created', 200);
             }
             return $this->respondJSON('error_creating', 500);
         } catch (Exception $e) {
