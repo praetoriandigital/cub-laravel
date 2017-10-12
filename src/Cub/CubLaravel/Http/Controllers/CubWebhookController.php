@@ -1,4 +1,4 @@
-<?php namespace Cub\CubLaravel\Controllers;
+<?php namespace Cub\CubLaravel\Http\Controllers;
 
 use Config;
 use Cub;

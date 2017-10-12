@@ -1,5 +1,6 @@
 <?php namespace Cub\CubLaravel;
 
+use Cub\CubLaravel\Filters\CubAuthFilter;
 use Cub_Config;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -25,7 +26,7 @@ class ServiceProvider extends BaseServiceProvider
         // register the filter
         $this->app['router']->filter('cub-auth', 'pd.cub.auth-filter');
 
-        include __DIR__ . '/routes.php';
+        include __DIR__ . '/Http/routes.php';
 
         Cub_Config::$api_key = $this->app['config']->get('cub::config.secret_key');
         Cub_Config::$api_url = $this->app['config']->get('cub::config.api_url');

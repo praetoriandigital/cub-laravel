@@ -1,7 +1,8 @@
-<?php namespace Cub\CubLaravel;
+<?php namespace Cub\CubLaravel\Transformers;
 
 use Carbon\Carbon;
 use Config;
+use Cub;
 use Cub_Object;
 use Cub\CubLaravel\Contracts\CubTransformer;
 

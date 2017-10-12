@@ -3,9 +3,11 @@
 use Carbon\Carbon;
 use Config;
 use Cub\CubLaravel\Contracts\CubTransformer;
-use Cub\CubLaravel\CubTransformHandler;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
+use Cub\CubLaravel\Handlers\Transformers\CubTransformHandler;
+use Cub\CubLaravel\Support\Login;
+use Cub\CubLaravel\Transformers\CubObjectTransformer;
 use Cub_Object;
 use Cub_User;
 use Firebase\JWT\JWT;

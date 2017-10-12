@@ -1,4 +1,4 @@
-<?php namespace Cub\CubLaravel;
+<?php namespace Cub\CubLaravel\Support;
 
 use Illuminate\Database\Eloquent\Model;
 

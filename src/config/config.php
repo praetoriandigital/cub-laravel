@@ -87,7 +87,7 @@ return array(
             |
             */
 
-            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
             |--------------------------------------------------------------------------
@@ -152,7 +152,7 @@ return array(
             |
             */
 
-            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
             |--------------------------------------------------------------------------
@@ -208,7 +208,7 @@ return array(
             |
             */
 
-            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
             |--------------------------------------------------------------------------

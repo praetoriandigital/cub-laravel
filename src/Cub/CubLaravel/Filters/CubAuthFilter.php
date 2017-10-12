@@ -1,5 +1,6 @@
-<?php namespace Cub\CubLaravel;
+<?php namespace Cub\CubLaravel\Filters;
 
+use Cub\CubLaravel\Cub;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Traits\RespondTrait;

@@ -1,4 +1,4 @@
-<?php namespace Cub\CubLaravel;
+<?php namespace Cub\CubLaravel\Handlers\Transformers;
 
 use Cub\CubLaravel\Contracts\CubTransformer;
 

@@ -76,7 +76,7 @@ abstract class CubLaravelTestCase extends TestCase
     protected function modifyConfiguration($app)
     {
         $app['config']->set('cub::config.maps.cub_user.model', 'Cub\CubLaravel\Test\Models\User');
-        $app['config']->set('cub::config.maps.cub_user.transformer', 'Cub\CubLaravel\CubObjectTransformer');
+        $app['config']->set('cub::config.maps.cub_user.transformer', 'Cub\CubLaravel\Transformers\CubObjectTransformer');
         $app['config']->set('cub::config.maps.cub_organization.model', 'Cub\CubLaravel\Test\Models\Organization');
         $app['config']->set('cub::config.maps.cub_member.model', 'Cub\CubLaravel\Test\Models\Member');
     }
