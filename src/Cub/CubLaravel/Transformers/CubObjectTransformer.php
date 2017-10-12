@@ -5,6 +5,7 @@ use Config;
 use Cub;
 use Cub_Object;
 use Cub\CubLaravel\Contracts\CubTransformer;
+use Illuminate\Database\Eloquent\Model;
 
 class CubObjectTransformer implements CubTransformer
 {
@@ -14,11 +15,42 @@ class CubObjectTransformer implements CubTransformer
     protected $cubObject;
 
     /**
+     * @var string
+     */
+    protected $objectType;
+
+    /**
+     * @var \Illuminate\Database\Eloquent\Model
+     */
+    protected $model;
+
+    /**
+     * @var array
+     */
+    protected $fields;
+
+    /**
+     * @var \Illuminate\Database\Eloquent\Model|null
+     */
+    protected $appObject;
+
+    /**
      * @param Cub_Object $cubObject
      */
     public function __construct(Cub_Object $cubObject)
     {
         $this->cubObject = $cubObject;
+        $this->objectType = strtolower(get_class($this->cubObject));
+        $this->model = app()->make(Config::get('cub::config.maps.'.$this->objectType.'.model'));
+        $this->fields = Config::get('cub::config.maps.'.$this->objectType.'.fields') ? : [];
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model
+     */
+    protected function setAppObject(Model $appObject)
+    {
+        $this->appObject = $appObject;
     }
 
     /**
@@ -26,22 +58,19 @@ class CubObjectTransformer implements CubTransformer
      */
     public function create()
     {
-        $objectType = strtolower(get_class($this->cubObject));
-        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
-        $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
-        if (is_array($fields)) {
+        if (!empty($this->fields)) {
             $attributes = [];
-            foreach ($fields as $cubField => $appField) {
-                if (in_array($appField, $model['fillable'])) {
+            foreach ($this->fields as $cubField => $appField) {
+                if (in_array($appField, $this->model['fillable'])) {
                     $value = $this->cubObject->{$cubField};
-                    if (in_array($appField, $model->getDates())) {
+                    if (in_array($appField, $this->model->getDates())) {
                         $value = Carbon::parse($value)->setTimezone('UTC');
                     }
                     $attributes[$appField] = $value;
                 }
             }
             if (count($attributes)) {
-                return (bool) $model->create($attributes);
+                return (bool) $this->model->create($attributes);
             }
         }
 
@@ -53,23 +82,20 @@ class CubObjectTransformer implements CubTransformer
      */
     public function update()
     {
-        $objectType = strtolower(get_class($this->cubObject));
-        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
-        $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
-        $appObject = Cub::getObjectById($objectType, $this->cubObject->id);
-        if (is_array($fields)) {
+        $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        if (!empty($this->fields)) {
             $updates = [];
-            foreach ($fields as $cubField => $appField) {
-                if (in_array($appField, $model['fillable'])) {
+            foreach ($this->fields as $cubField => $appField) {
+                if (in_array($appField, $this->model['fillable'])) {
                     $value = $this->cubObject->{$cubField};
-                    if (in_array($appField, $model->getDates())) {
+                    if (in_array($appField, $this->model->getDates())) {
                         $value = Carbon::parse($value)->setTimezone('UTC');
                     }
                     $updates[$appField] = $value;
                 }
             }
             if (count($updates)) {
-                return $appObject->update($updates);
+                return $this->appObject->update($updates);
             }
         }
 
@@ -81,8 +107,7 @@ class CubObjectTransformer implements CubTransformer
      */
     public function delete()
     {
-        $objectType = strtolower(get_class($this->cubObject));
-        $appObject = Cub::getObjectById($objectType, $this->cubObject->id);
-        return $appObject->delete();
+        $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        return $this->appObject->delete();
     }
 }
