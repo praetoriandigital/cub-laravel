@@ -97,7 +97,7 @@ class CubObjectTransformer implements CubTransformer
                 }
             }
             if (count($updates)) {
-                return $this->appObject->update($updates);
+                return $this->appObject->fill($updates)->save();
             }
         }
 
