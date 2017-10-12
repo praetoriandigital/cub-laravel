@@ -8,20 +8,31 @@ use Cub\CubLaravel\Contracts\CubTransformer;
 class CubObjectTransformer implements CubTransformer
 {
     /**
+     * @var Cub_Object
+     */
+    protected $cubObject;
+
+    /**
      * @param Cub_Object $cubObject
-     *
+     */
+    public function __construct(Cub_Object $cubObject)
+    {
+        $this->cubObject = $cubObject;
+    }
+
+    /**
      * @return bool
      */
-    public function create(Cub_Object $cubObject)
+    public function create()
     {
-        $objectType = strtolower(get_class($cubObject));
+        $objectType = strtolower(get_class($this->cubObject));
         $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
         $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
         if (is_array($fields)) {
             $attributes = [];
             foreach ($fields as $cubField => $appField) {
                 if (in_array($appField, $model['fillable'])) {
-                    $value = $cubObject->{$cubField};
+                    $value = $this->cubObject->{$cubField};
                     if (in_array($appField, $model->getDates())) {
                         $value = Carbon::parse($value)->setTimezone('UTC');
                     }
@@ -37,21 +48,19 @@ class CubObjectTransformer implements CubTransformer
     }
 
     /**
-     * @param Cub_Object $cubObject
-     *
      * @return bool
      */
-    public function update(Cub_Object $cubObject)
+    public function update()
     {
-        $objectType = strtolower(get_class($cubObject));
+        $objectType = strtolower(get_class($this->cubObject));
         $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
         $fields = Config::get('cub::config.maps.'.$objectType.'.fields');
-        $appObject = Cub::getObjectById($objectType, $cubObject->id);
+        $appObject = Cub::getObjectById($objectType, $this->cubObject->id);
         if (is_array($fields)) {
             $updates = [];
             foreach ($fields as $cubField => $appField) {
                 if (in_array($appField, $model['fillable'])) {
-                    $value = $cubObject->{$cubField};
+                    $value = $this->cubObject->{$cubField};
                     if (in_array($appField, $model->getDates())) {
                         $value = Carbon::parse($value)->setTimezone('UTC');
                     }
@@ -67,14 +76,12 @@ class CubObjectTransformer implements CubTransformer
     }
 
     /**
-     * @param Cub_Object $cubObject
-     *
      * @return bool
      */
-    public function delete(Cub_Object $cubObject)
+    public function delete()
     {
-        $objectType = strtolower(get_class($cubObject));
-        $appObject = Cub::getObjectById($objectType, $cubObject->id);
+        $objectType = strtolower(get_class($this->cubObject));
+        $appObject = Cub::getObjectById($objectType, $this->cubObject->id);
         return $appObject->delete();
     }
 }

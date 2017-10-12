@@ -3,6 +3,7 @@
 use Carbon\Carbon;
 use Config;
 use Cub\CubLaravel\Contracts\CubTransformer;
+use Cub\CubLaravel\CubTransformHandler;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub_Object;
@@ -18,11 +19,6 @@ class Cub
     const CUB_COOKIE = 'cubUserToken';
 
     /**
-     * @var \Cub\CubLaravel\Contracts\CubTransformer
-     */
-    protected $transformer;
-
-    /**
      * @var \Illuminate\Http\Request
      */
     protected $request;
@@ -34,12 +30,10 @@ class Cub
     /**
      * Cub constructor.
      *
-     * @param \Cub\CubLaravel\Contracts\CubTransformer $transformer
      * @param \Illuminate\Http\Request $request
      */
-    public function __construct(CubTransformer $transformer, Request $request)
+    public function __construct(Request $request)
     {
-        $this->transformer = $transformer;
         $this->request = $request;
     }
 
@@ -247,11 +241,15 @@ class Cub
      */
     public function createObject(Cub_Object $cubObject)
     {
+        $objectType = strtolower(get_class($cubObject));
         if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
-            return app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'))->create($cubObject);
+            $transformer = app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'), [$cubObject]);
+        } else {
+            $transformer = new CubObjectTransformer($cubObject);
         }
 
-        return $this->transformer->create($cubObject);
+        $handler = new CubTransformHandler($transformer);
+        return $handler->create();
     }
 
     /**
@@ -261,11 +259,15 @@ class Cub
      */
     public function updateObject(Cub_Object $cubObject)
     {
+        $objectType = strtolower(get_class($cubObject));
         if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
-            return app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'))->update($cubObject);
+            $transformer = app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'), [$cubObject]);
+        } else {
+            $transformer = new CubObjectTransformer($cubObject);
         }
 
-        return $this->transformer->update($cubObject);
+        $handler = new CubTransformHandler($transformer);
+        return $handler->update();
     }
 
     /**
@@ -275,10 +277,14 @@ class Cub
      */
     public function deleteObject(Cub_Object $cubObject)
     {
+        $objectType = strtolower(get_class($cubObject));
         if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
-            return app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'))->delete($cubObject);
+            $transformer = app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'), [$cubObject]);
+        } else {
+            $transformer = new CubObjectTransformer($cubObject);
         }
 
-        return $this->transformer->delete($cubObject);
+        $handler = new CubTransformHandler($transformer);
+        return $handler->delete();
     }
 }

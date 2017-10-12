@@ -6,22 +6,21 @@ interface CubTransformer
 {
     /**
      * @param Cub_Object $cubObject
-     *
-     * @return bool
      */
-    public function create(Cub_Object $cubObject);
+    public function __construct(Cub_Object $cubObject);
 
     /**
-     * @param Cub_Object $cubObject
-     *
      * @return bool
      */
-    public function update(Cub_Object $cubObject);
+    public function create();
 
     /**
-     * @param Cub_Object $cubObject
-     *
      * @return bool
      */
-    public function delete(Cub_Object $cubObject);
+    public function update();
+
+    /**
+     * @return bool
+     */
+    public function delete();
 }

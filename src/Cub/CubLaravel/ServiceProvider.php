@@ -43,7 +43,7 @@ class ServiceProvider extends BaseServiceProvider
         });
 
         $this->app->bind('cub', function ($app) {
-            return new Cub(new CubObjectTransformer, $app['request']);
+            return new Cub($app['request']);
         });
 
         $this->app->bind('cub-widget', function ($app) {
