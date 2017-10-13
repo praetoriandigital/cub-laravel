@@ -237,6 +237,36 @@ class Cub
     }
 
     /**
+     * Set the Cub Organization cookie
+     *
+     * @param string $cubOrgId
+     *
+     * @return bool
+     */
+    public function setCubOrganizationIdCookie($cubOrgId)
+    {
+        if (substr($cubOrgId, 0, 4) === 'org_') {
+            $_COOKIE['cubOrganizationId'] = $cubOrgId;
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Clear Cub cookies
+     *
+     * @return void
+     */
+    public function clearCookies()
+    {
+        unset($_COOKIE['cubUserToken']);
+        setcookie('cubUserToken', null, -1, '/');
+        unset($_COOKIE['cubOrganizationId']);
+        setcookie('cubOrganizationId', null, -1, '/');
+    }
+
+    /**
      * @param Cub_Object $cubObject
      *
      * @return bool
