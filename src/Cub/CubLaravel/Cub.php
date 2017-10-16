@@ -246,7 +246,8 @@ class Cub
     public function setCubOrganizationIdCookie($cubOrgId)
     {
         if (substr($cubOrgId, 0, 4) === 'org_') {
-            $_COOKIE['cubOrganizationId'] = $cubOrgId;
+            unset($_COOKIE['cubOrganizationId']);
+            setcookie('cubOrganizationId', $cubOrgId, 0, '/');
             return true;
         }
 
