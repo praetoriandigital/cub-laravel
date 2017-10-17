@@ -85,7 +85,7 @@ class CubObjectTransformer implements CubTransformer
         if (!$this->appObject) {
             $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
         }
-        if (!empty($this->fields)) {
+        if (!empty($this->fields) || ($this->appObject->deleted_at && !$this->cubObject->deleted)) {
             $updates = [];
             foreach ($this->fields as $cubField => $appField) {
                 if (in_array($appField, $this->model['fillable'])) {
@@ -94,6 +94,11 @@ class CubObjectTransformer implements CubTransformer
                         $value = Carbon::parse($value)->setTimezone('UTC');
                     }
                     $updates[$appField] = $value;
+                }
+            }
+            if ($this->appObject->deleted_at && !$this->cubObject->deleted) {
+                if (!$this->appObject->restore()) {
+                    return false;
                 }
             }
             if (count($updates)) {

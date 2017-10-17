@@ -138,7 +138,13 @@ class Cub
      */
     public function getObjectById($objectType, $cubId)
     {
-        $object = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'))->whereCubId($cubId)->first();
+        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
+        if (method_exists($model, 'withTrashed')) {
+            $object = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'))->withTrashed()->whereCubId($cubId)->first();    
+        } else {
+            $object = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'))->whereCubId($cubId)->first();
+        }
+        
         if (!$object) {
             throw new ObjectNotFoundByCubIdException($cubId);
         }
