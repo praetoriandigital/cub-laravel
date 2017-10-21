@@ -79,6 +79,8 @@ abstract class CubLaravelTestCase extends TestCase
         $app['config']->set('cub::config.maps.cub_user.transformer', 'Cub\CubLaravel\Transformers\CubObjectTransformer');
         $app['config']->set('cub::config.maps.cub_organization.model', 'Cub\CubLaravel\Test\Models\Organization');
         $app['config']->set('cub::config.maps.cub_member.model', 'Cub\CubLaravel\Test\Models\Member');
+        $app['config']->set('cub::config.maps.cub_group.model', null);
+        $app['config']->set('cub::config.maps.cub_groupmember.model', null);
     }
 
     /**

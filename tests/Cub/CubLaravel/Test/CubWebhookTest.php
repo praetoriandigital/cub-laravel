@@ -165,8 +165,8 @@ class CubWebhookTest extends CubLaravelTestCase
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'object' => 'Group',
-            'id' => 'grp_jhakjhwk4esjkjahs',
+            'object' => 'Site',
+            'id' => 'ste_jhakjhwk4esjkjahs',
             'deleted' => false,
         ]);
 
