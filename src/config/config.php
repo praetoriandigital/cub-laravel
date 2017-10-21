@@ -236,6 +236,97 @@ return array(
                 'created' => 'created',
             ],
         ],
+
+        'cub_group' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Group Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the group model which will be returned.
+            |
+            */
+
+            'model' => 'App\Group',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Group Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your Group Models.
+            |
+            */
+
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Group Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub Group keys can
+            | be mapped to the fields on your Group model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                'id' => 'cub_id',
+                'organization' => 'organization',
+                'name' => 'name',
+                'type' => 'type',
+                'description' => 'description',
+                'created' => 'created',
+            ],
+        ],
+
+        'cub_groupmember' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application GroupMember Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the GroupMember model which will be returned.
+            |
+            */
+
+            'model' => 'App\GroupMember',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application GroupMember Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your GroupMember Models.
+            |
+            */
+
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application GroupMember Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub GroupMember keys can
+            | be mapped to the fields on your GroupMember model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                'id' => 'cub_id',
+                'group' => 'group',
+                'member' => 'member',
+                'is_admin' => 'is_admin',
+                'created' => 'created',
+            ],
+        ],
     ],
 
 );
