@@ -59,6 +59,38 @@ class CubWebhookTest extends CubLaravelTestCase
     }
 
     /** @test */
+    public function new_deleted_cub_user_creates_deleted_application_user()
+    {
+        $expectedResponse = [
+            'code' => 200,
+            'content' => json_encode(['message' => 'created']),
+        ];
+        $expectedCubId = 'usr_kjhdi7y3u4rkjsk';
+        $expectedFirstName = 'Luke';
+        $expectedLastName = 'Skywalker';
+        $expectedEmail = 'luke@lukeskywalker.edu';
+        $expectedUsername = 'lukie1';
+        $lastLogin = '2017-09-29T17:39:23Z';
+
+        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+            'object' => 'user',
+            'id' => $expectedCubId,
+            'first_name' => $expectedFirstName,
+            'last_name' => $expectedLastName,
+            'email' => $expectedEmail,
+            'username' => $expectedUsername,
+            'last_login' => $lastLogin,
+            'deleted' => true,
+        ]);
+
+        $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
+        $this->assertEquals($expectedResponse['content'], $response->getContent());
+
+        $user = User::whereCubId($expectedCubId)->first();
+        $this->assertNull($user);
+    }
+
+    /** @test */
     public function updated_cub_user_updates_application_user()
     {
         $expectedResponse = [

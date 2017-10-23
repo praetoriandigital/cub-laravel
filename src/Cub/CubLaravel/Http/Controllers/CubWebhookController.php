@@ -18,11 +18,10 @@ class CubWebhookController extends Controller
     public function receive()
     {
         try {
-            $input = Input::all();
-            $object = Cub_Object::fromJson(json_encode($input));
+            $object = Cub_Object::fromJson(json_encode(Input::all()));
 
             if (in_array(strtolower(get_class($object)), array_keys(Config::get('cub::config.maps')))) {
-                if (array_get($input, 'deleted', false)) {
+                if ($object->deleted) {
                     if (Cub::deleteObject($object)) {
                         return $this->respondJSON('deleted', 200);
                     }

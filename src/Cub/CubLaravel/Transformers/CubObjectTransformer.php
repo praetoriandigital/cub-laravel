@@ -70,7 +70,11 @@ class CubObjectTransformer implements CubTransformer
                 }
             }
             if (count($attributes)) {
-                return (bool) $this->model->create($attributes);
+                $appObject = $this->model->create($attributes);
+                if ($appObject && $this->cubObject->deleted) {
+                    return $appObject->delete();
+                }
+                return (bool) $appObject;
             }
         }
 
