@@ -7,6 +7,7 @@ class Organization extends Model
     protected $table = 'organizations';
 
     public $fillable = [
+        'cub_id',
         'name',
         'employees',
         'tags',

@@ -7,6 +7,7 @@ class Member extends Model
     protected $table = 'members';
 
     public $fillable = [
+        'cub_id',
         'organization',
         'user',
         'invitation',

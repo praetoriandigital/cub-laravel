@@ -1,6 +1,7 @@
 <?php namespace Cub\CubLaravel\Test;
 
 use Carbon\Carbon;
+use Cub\CubLaravel\Test\Models\GroupMember;
 use Cub\CubLaravel\Test\Models\Organization;
 use Cub\CubLaravel\Test\Models\User;
 
@@ -10,7 +11,7 @@ class CubWebhookTest extends CubLaravelTestCase
     public function webhook_url_is_registered()
     {
         $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'object' => 'User',
+            'object' => 'user',
             'id' => $this->details['id'],
             'first_name' => '',
             'last_name' => '',
@@ -36,7 +37,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $lastLogin = '2017-09-29T17:39:23Z';
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'object' => 'User',
+            'object' => 'user',
             'id' => $expectedCubId,
             'first_name' => $expectedFirstName,
             'last_name' => $expectedLastName,
@@ -71,7 +72,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $lastLogin = '2017-09-29T17:39:23Z';
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'object' => 'User',
+            'object' => 'user',
             'id' => $this->details['id'],
             'first_name' => $expectedFirstName,
             'last_name' => $expectedLastName,
@@ -101,7 +102,7 @@ class CubWebhookTest extends CubLaravelTestCase
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'object' => 'User',
+            'object' => 'user',
             'id' => $this->details['id'],
             'first_name' => '',
             'last_name' => '',
@@ -129,7 +130,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedName = 'Updated Testy';
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'object' => 'Organization',
+            'object' => 'organization',
             'id' => 'org_jhakjhwk4esjkjahs',
             'name' => $expectedName,
             'employees' => '',
@@ -165,12 +166,42 @@ class CubWebhookTest extends CubLaravelTestCase
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
-            'object' => 'Site',
+            'object' => 'site',
             'id' => 'ste_jhakjhwk4esjkjahs',
             'deleted' => false,
         ]);
 
         $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
         $this->assertEquals($expectedResponse['content'], $response->getContent());
+    }
+
+    /** @test */
+    function created_studly_caps_object_is_created()
+    {
+        $expectedResponse = [
+            'code' => 200,
+            'content' => json_encode(['message' => 'created']),
+        ];
+        $expectedCubId = 'grm_kjhdi7y3u4rkjsk';
+        $expectedGroup = 'grp_jhklu32yiweysih';
+        $expectedMember = 'mbr_jhq2iu3wye8stkjkhlkd';
+        $expectedAdmin = false;
+
+        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+            'object' => 'groupmember',
+            'id' => $expectedCubId,
+            'group' => $expectedGroup,
+            'member' => $expectedMember,
+            'is_admin' => $expectedAdmin,
+            'created' => '',
+        ]);
+
+        $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
+        $this->assertEquals($expectedResponse['content'], $response->getContent());
+
+        $groupMember = GroupMember::whereCubId($expectedCubId)->first();
+        $this->assertEquals($expectedGroup, $groupMember->group);
+        $this->assertEquals($expectedMember, $groupMember->member);
+        $this->assertEquals(0, $groupMember->is_admin);
     }
 }
