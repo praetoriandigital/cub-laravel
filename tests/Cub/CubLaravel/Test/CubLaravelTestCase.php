@@ -81,6 +81,8 @@ abstract class CubLaravelTestCase extends TestCase
         $app['config']->set('cub::config.maps.cub_member.model', 'Cub\CubLaravel\Test\Models\Member');
         $app['config']->set('cub::config.maps.cub_group.model', null);
         $app['config']->set('cub::config.maps.cub_groupmember.model', 'Cub\CubLaravel\Test\Models\GroupMember');
+        $app['config']->set('cub::config.maps.cub_country.model', null);
+        $app['config']->set('cub::config.maps.cub_state.model', null);
     }
 
     /**

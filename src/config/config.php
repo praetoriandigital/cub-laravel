@@ -327,6 +327,95 @@ return array(
                 'created' => 'created',
             ],
         ],
+
+        'cub_country' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Country Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the Country model which will be returned.
+            |
+            */
+
+            'model' => 'App\Country',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Country Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your Country Models.
+            |
+            */
+
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Country Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub Country keys can
+            | be mapped to the fields on your Country model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                'id' => 'cub_id',
+                'name' => 'name',
+                'code' => 'code',
+                'code2' => 'code2',
+                'code3' => 'code3',
+            ],
+        ],
+
+        'cub_state' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the State model which will be returned.
+            |
+            */
+
+            'model' => 'App\State',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your State Models.
+            |
+            */
+
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub State keys can
+            | be mapped to the fields on your State model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                'id' => 'cub_id',
+                'name' => 'name',
+                'code' => 'code',
+                'country' => 'country',
+            ],
+        ],
     ],
 
 );
