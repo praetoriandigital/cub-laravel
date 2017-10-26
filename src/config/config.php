@@ -64,7 +64,7 @@ return array(
         |--------------------------------------------------------------------------
         */
 
-        'cub_user' => [
+        'user' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -129,7 +129,7 @@ return array(
             ],
         ],
 
-        'cub_organization' => [
+        'organization' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -183,9 +183,25 @@ return array(
                 'created' => 'created',
                 'logo' => 'logo',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Organization Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub Organization related models.
+            | Related models will be updated whenever the Organization
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'state' => 'state_id',
+                'country' => 'country_id',
+            ],
         ],
 
-        'cub_member' => [
+        'member' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -235,9 +251,25 @@ return array(
                 'group_membership' => 'group_membership',
                 'created' => 'created',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Member Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub Member related models.
+            | Related models will be updated whenever the Member
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'organization' => 'organization_id',
+                'user' => 'user_id',
+            ],
         ],
 
-        'cub_group' => [
+        'group' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -281,9 +313,24 @@ return array(
                 'description' => 'description',
                 'created' => 'created',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Group Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub Group related models.
+            | Related models will be updated whenever the Group
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'organization' => 'organization_id',
+            ],
         ],
 
-        'cub_groupmember' => [
+        'groupmember' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -326,9 +373,25 @@ return array(
                 'is_admin' => 'is_admin',
                 'created' => 'created',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application GroupMember Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub GroupMember related models.
+            | Related models will be updated whenever the GroupMember
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'group' => 'group_id',
+                'member' => 'member_id',
+            ],
         ],
 
-        'cub_country' => [
+        'country' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -373,7 +436,7 @@ return array(
             ],
         ],
 
-        'cub_state' => [
+        'state' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -414,6 +477,21 @@ return array(
                 'name' => 'name',
                 'code' => 'code',
                 'country' => 'country',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub State related models.
+            | Related models will be updated whenever the State
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'country' => 'country_id',
             ],
         ],
     ],

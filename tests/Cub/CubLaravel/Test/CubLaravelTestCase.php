@@ -1,6 +1,8 @@
 <?php namespace Cub\CubLaravel\Test;
 
 use Cub;
+use Cub\CubLaravel\Contracts\CubGateway;
+use Cub\CubLaravel\Support\FakeCubApiGateway;
 use DB;
 use Orchestra\Testbench\TestCase;
 
@@ -29,6 +31,7 @@ abstract class CubLaravelTestCase extends TestCase
             'password' => 'SJW8Gg',
         ];
 
+        $this->app->bind(CubGateway::class, FakeCubApiGateway::class);
         $this->modifyConfiguration($this->app);
         $this->prepareDatabase();
         $this->prepareRoutes();
@@ -75,14 +78,14 @@ abstract class CubLaravelTestCase extends TestCase
      */
     protected function modifyConfiguration($app)
     {
-        $app['config']->set('cub::config.maps.cub_user.model', 'Cub\CubLaravel\Test\Models\User');
-        $app['config']->set('cub::config.maps.cub_user.transformer', 'Cub\CubLaravel\Transformers\CubObjectTransformer');
-        $app['config']->set('cub::config.maps.cub_organization.model', 'Cub\CubLaravel\Test\Models\Organization');
-        $app['config']->set('cub::config.maps.cub_member.model', 'Cub\CubLaravel\Test\Models\Member');
-        $app['config']->set('cub::config.maps.cub_group.model', null);
-        $app['config']->set('cub::config.maps.cub_groupmember.model', 'Cub\CubLaravel\Test\Models\GroupMember');
-        $app['config']->set('cub::config.maps.cub_country.model', null);
-        $app['config']->set('cub::config.maps.cub_state.model', null);
+        $app['config']->set('cub::config.maps.user.model', 'Cub\CubLaravel\Test\Models\User');
+        $app['config']->set('cub::config.maps.user.transformer', 'Cub\CubLaravel\Transformers\CubObjectTransformer');
+        $app['config']->set('cub::config.maps.organization.model', 'Cub\CubLaravel\Test\Models\Organization');
+        $app['config']->set('cub::config.maps.member.model', 'Cub\CubLaravel\Test\Models\Member');
+        $app['config']->set('cub::config.maps.group.model', null);
+        $app['config']->set('cub::config.maps.groupmember.model', 'Cub\CubLaravel\Test\Models\GroupMember');
+        $app['config']->set('cub::config.maps.country.model', 'Cub\CubLaravel\Test\Models\Country');
+        $app['config']->set('cub::config.maps.state.model', 'Cub\CubLaravel\Test\Models\State');
     }
 
     /**

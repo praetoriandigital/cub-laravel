@@ -1,9 +1,14 @@
 <?php namespace Cub\CubLaravel\Test;
 
 use Cub;
-use Firebase\JWT\JWT;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
+use Cub\CubLaravel\Test\Models\Country;
+use Cub\CubLaravel\Test\Models\Member;
+use Cub\CubLaravel\Test\Models\Organization;
+use Cub\CubLaravel\Test\Models\State;
 use Cub\CubLaravel\Test\Models\User;
+use Cub_Object;
+use Firebase\JWT\JWT;
 
 class CubLaravelTest extends CubLaravelTestCase
 {
@@ -13,7 +18,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = $login->getUser();
 
-        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.cub_user.model'), $user);
+        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.user.model'), $user);
         $this->assertEquals($user->email, $this->credentials['username']);
     }
 
@@ -23,7 +28,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = Cub::currentUser();
 
-        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.cub_user.model'), $user);
+        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.user.model'), $user);
         $this->assertEquals($login->getUser(), $user);
     }
 
@@ -131,5 +136,98 @@ class CubLaravelTest extends CubLaravelTestCase
     public function exception_thrown_when_bad_jwt()
     {
         Cub::getUserByJWT('kjashdkfjahkjashdfklaj');
+    }
+
+    /** @test */
+    public function get_expands_is_accurate()
+    {
+        $expected = 'organization,user,organization__state,organization__country';
+
+        $object = Cub_Object::fromArray([
+            'object' => 'member',
+            'id' => 'mbr_jahu34iuy',
+            'organization' => 'org_h34iweryiuklsj',
+            'user' => 'usr_jh3iquy4iwey',
+        ]);
+        $actual = Cub::getObjectExpands($object);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /** @test */
+    public function process_nonnested_object()
+    {
+        $memberCubId = 'mbr_jieuydijhadksj3473';
+        $orgCubId = 'org_j237tausyg2hadkqwh';
+        $userCubId = 'usr_2378qwyakhlsjhglu23';
+        $object = Cub_Object::fromArray([
+            'object' => 'member',
+            'id' => $memberCubId,
+            'organization' => $orgCubId,
+            'user' => $userCubId,
+        ]);
+
+        $result = Cub::processObject($object);
+
+        $member = Member::whereCubId($memberCubId)->first();
+
+        $this->assertEquals($result->cub_id, $member->cub_id);
+        $this->assertEquals($member->organization, $orgCubId);
+        $this->assertEquals($member->user, $userCubId);
+    }
+
+    /** @test */
+    public function process_nested_object()
+    {
+        $memberCubId = 'mbr_jieuydijhadksj3473';
+        $orgCubId = 'org_j237tausyg2hadkqwh';
+        $stateCubId = 'stt_j237tausyg2hadkqwh';
+        $countryCubId = 'cry_j237tausyg2hadkqwh';
+        $userCubId = 'usr_2378qwyakhlsjhglu23';
+        $object = Cub_Object::fromArray([
+            'object' => 'member',
+            'id' => $memberCubId,
+            'organization' => [
+                'object' => 'organization',
+                'id' => $orgCubId,
+                'name' => 'Org Name',
+                'state' => [
+                    'object' => 'state',
+                    'id' => $stateCubId,
+                    'name' => 'State',
+                ],
+                'country' => [
+                    'object' => 'country',
+                    'id' => $countryCubId,
+                    'name' => 'Country',
+                ],
+            ],
+            'user' => [
+                'object' => 'user',
+                'id' => $userCubId,
+                'username' => 'Username',
+                'first_name' => 'First',
+                'last_name' => 'Last',
+                'email' => 'joe@email.dev',
+            ],
+        ]);
+
+        $result = Cub::processObject($object);
+
+        $member = Member::whereCubId($memberCubId)->first();
+        $user = User::whereCubId($userCubId)->first();
+        $org = Organization::whereCubId($orgCubId)->first();
+        $country = Country::whereCubId($countryCubId)->first();
+        $state = State::whereCubId($stateCubId)->first();
+
+        $this->assertEquals($result->cub_id, $member->cub_id);
+        $this->assertNotNull($user);
+        $this->assertEquals($user->cub_id, $userCubId);
+        $this->assertNotNull($org);
+        $this->assertEquals($org->cub_id, $orgCubId);
+        $this->assertNotNull($country);
+        $this->assertEquals($country->cub_id, $countryCubId);
+        $this->assertNotNull($state);
+        $this->assertEquals($state->cub_id, $stateCubId);
     }
 }

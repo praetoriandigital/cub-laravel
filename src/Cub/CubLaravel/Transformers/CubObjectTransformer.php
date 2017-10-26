@@ -3,8 +3,9 @@
 use Carbon\Carbon;
 use Config;
 use Cub;
-use Cub_Object;
 use Cub\CubLaravel\Contracts\CubTransformer;
+use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
+use Cub_Object;
 use Illuminate\Database\Eloquent\Model;
 
 class CubObjectTransformer implements CubTransformer
@@ -30,6 +31,11 @@ class CubObjectTransformer implements CubTransformer
     protected $fields;
 
     /**
+     * @var array
+     */
+    protected $relations;
+
+    /**
      * @var \Illuminate\Database\Eloquent\Model|null
      */
     protected $appObject;
@@ -40,19 +46,18 @@ class CubObjectTransformer implements CubTransformer
     public function __construct(Cub_Object $cubObject)
     {
         $this->cubObject = $cubObject;
-        $this->objectType = $this->getObjectType($this->cubObject);
+        $this->setObjectType($this->cubObject);
         $this->model = app()->make(Config::get('cub::config.maps.'.$this->objectType.'.model'));
         $this->fields = $this->getFields($this->objectType);
+        $this->relations = $this->getRelations($this->objectType);
     }
 
     /**
      * @param Cub_Object $cubObject
-     *
-     * @return string
      */
-    protected function getObjectType(Cub_Object $cubObject)
+    protected function setObjectType(Cub_Object $cubObject)
     {
-        return strtolower(get_class($cubObject));
+        $this->objectType = Cub::objectType($cubObject);
     }
 
     /**
@@ -66,6 +71,16 @@ class CubObjectTransformer implements CubTransformer
     }
 
     /**
+     * @param $objectType
+     *
+     * @return array
+     */
+    protected function getRelations($objectType)
+    {
+        return Config::get('cub::config.maps.'.$objectType.'.relations') ? : [];
+    }
+
+    /**
      * @param \Illuminate\Database\Eloquent\Model $appObject
      */
     protected function setAppObject(Model $appObject)
@@ -76,18 +91,31 @@ class CubObjectTransformer implements CubTransformer
     /**
      * @return bool
      */
-    public function create()
+    public function process()
     {
-        if (!empty($this->fields)) {
-            $attributes = [];
-            $this->prepareData($attributes);
-            if (count($attributes)) {
-                $appObject = $this->model->create($attributes);
-                if ($appObject && $this->cubObject->deleted) {
-                    return $appObject->delete();
-                }
-                return (bool) $appObject;
+        if (!$this->appObject) {
+            try {
+                $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+            } catch (ObjectNotFoundByCubIdException $e) {
+                $this->setAppObject(Cub::getNewObject($this->objectType));
             }
+        }
+        if ($this->needsProcessing()) {
+
+            $data = [];
+            $this->prepareData($data);
+
+            if (count($data) && !$this->appObject->fill($data)->save()) {
+                return false;
+            }
+
+            if ($this->needsToRestore() && !$this->appObject->restore()) {
+                return false;
+            } else if ($this->needsToDelete() && !$this->appObject->delete()) {
+                return false;
+            }
+
+            return $this->appObject;
         }
 
         return false;
@@ -96,41 +124,34 @@ class CubObjectTransformer implements CubTransformer
     /**
      * @return bool
      */
-    public function update()
+    protected function needsProcessing()
     {
-        if (!$this->appObject) {
-            $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        if (isset($this->fields) && isset($this->appObject) && isset($this->cubObject)) {
+            return !empty($this->fields) || ($this->appObject->deleted_at && !$this->cubObject->deleted);
         }
-        if (!empty($this->fields) || ($this->appObject->deleted_at && !$this->cubObject->deleted)) {
-            $updates = [];
-            $this->prepareData($updates);
-            if ($this->appObject->deleted_at && !$this->cubObject->deleted) {
-                if (!$this->appObject->restore()) {
-                    return false;
-                }
-            }
-            if (count($updates)) {
-                return $this->appObject->fill($updates)->save();
-            }
-        }
-
         return false;
     }
 
     /**
      * @return bool
      */
-    public function delete()
+    protected function needsToRestore()
     {
-        if (!$this->appObject) {
-            $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+        if (isset($this->appObject) && isset($this->cubObject)) {
+            return $this->appObject->deleted_at && !$this->cubObject->deleted;
         }
-        $updates = [];
-        $this->prepareData($updates);
-        if (count($updates)) {
-            $this->appObject->fill($updates)->save();
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function needsToDelete()
+    {
+        if (isset($this->appObject) && isset($this->cubObject)) {
+            return !$this->appObject->deleted_at && $this->cubObject->deleted;
         }
-        return $this->appObject->delete();
+        return false;
     }
 
     /**
@@ -143,13 +164,17 @@ class CubObjectTransformer implements CubTransformer
         $cubObject = $cubObject ? : $this->cubObject;
         if ($model) {
             $fields = $this->getFields($this->getObjectType($cubObject));
+            $relations = $this->getRelations($this->getObjectType($cubObject));
             $fillable = $model['fillable'];
             $dates = $model->getDates();
         } else {
             $fields = $this->fields;
+            $relations = $this->relations;
             $fillable = $this->model['fillable'];
             $dates = $this->model->getDates();
         }
+
+        $this->processRelationsData($data);
 
         foreach ($fields as $cubField => $appField) {
             if (in_array($appField, $fillable)) {
@@ -157,7 +182,37 @@ class CubObjectTransformer implements CubTransformer
                 if (in_array($appField, $dates)) {
                     $value = Carbon::parse($value)->setTimezone('UTC');
                 }
-                $data[$appField] = $value;
+                if (!is_array($value) && !$value instanceof Cub_Object) {
+                    $data[$appField] = $value;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param Cub_Object $cubObject
+     * @param Model $model
+     */
+    protected function processRelationsData(array &$data, Cub_Object $cubObject = null, Model $model = null)
+    {
+        $cubObject = $cubObject ? : $this->cubObject;
+        if ($model) {
+            $relations = $this->getRelations($this->getObjectType($cubObject));
+            $fillable = $model['fillable'];
+        } else {
+            $relations = $this->relations;
+            $fillable = $this->model['fillable'];
+        }
+
+        foreach ($relations as $cubField => $appField) {
+            if (in_array($appField, $fillable)) {
+                $value = $cubObject->{$cubField};
+                if ($value instanceof Cub_Object && Cub::objectIsTracked($value)) {
+                    if ($appObject = Cub::processObject($value, false)) {
+                        $data[$appField] = $appObject->id;
+                    }
+                }
             }
         }
     }

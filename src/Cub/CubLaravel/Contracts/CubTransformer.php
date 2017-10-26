@@ -12,15 +12,5 @@ interface CubTransformer
     /**
      * @return bool
      */
-    public function create();
-
-    /**
-     * @return bool
-     */
-    public function update();
-
-    /**
-     * @return bool
-     */
-    public function delete();
+    public function process();
 }

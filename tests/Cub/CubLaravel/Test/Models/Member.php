@@ -9,7 +9,9 @@ class Member extends Model
     public $fillable = [
         'cub_id',
         'organization',
+        'organization_id',
         'user',
+        'user_id',
         'invitation',
         'personal_id',
         'post_id',

@@ -1,6 +1,10 @@
 <?php namespace Cub\CubLaravel;
 
+use Cub\CubLaravel\Contracts\CubGateway;
+use Cub\CubLaravel\Cub;
+use Cub\CubLaravel\CubWidget;
 use Cub\CubLaravel\Filters\CubAuthFilter;
+use Cub\CubLaravel\Support\CubApiGateway;
 use Cub_Config;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -43,13 +47,9 @@ class ServiceProvider extends BaseServiceProvider
             return new CubAuthFilter($app->make('cub'));
         });
 
-        $this->app->bind('cub', function ($app) {
-            return new Cub($app['request']);
-        });
-
-        $this->app->bind('cub-widget', function ($app) {
-            return new CubWidget;
-        });
+        $this->app->bind(CubGateway::class, CubApiGateway::class);
+        $this->app->bind('cub', Cub::class);
+        $this->app->bind('cub-widget', CubWidget::class);
     }
 
     /**

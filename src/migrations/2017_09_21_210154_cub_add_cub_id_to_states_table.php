@@ -14,7 +14,7 @@ class CubAddCubIdToStatesTable extends Migration
      */
     public function up()
     {
-        if ($modelName = Config::get('cub::config.maps.cub_state.model')) {
+        if ($modelName = Config::get('cub::config.maps.state.model')) {
             $tableName = App::make($modelName)->getTable();
             if (Schema::hasTable($tableName) && !Schema::hasColumn($tableName, self::CUB_ID)) {
                 Schema::table($tableName, function (Blueprint $table) {
@@ -37,7 +37,7 @@ class CubAddCubIdToStatesTable extends Migration
      */
     public function down()
     {
-        if ($modelName = Config::get('cub::config.maps.cub_state.model')) {
+        if ($modelName = Config::get('cub::config.maps.state.model')) {
             $tableName = App::make($modelName)->getTable();
             if (Schema::hasTable($tableName) && Schema::hasColumn($tableName, self::CUB_ID)) {
                 Schema::table($tableName, function (Blueprint $table) {

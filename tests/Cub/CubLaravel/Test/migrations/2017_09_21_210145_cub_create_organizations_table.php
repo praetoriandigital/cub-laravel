@@ -19,7 +19,9 @@ class CubCreateOrganizationsTable extends Migration
             $table->string('employees')->nullable();
             $table->string('tags')->nullable();
             $table->string('country')->nullable();
+            $table->string('country_id')->nullable();
             $table->string('state')->nullable();
+            $table->string('state_id')->nullable();
             $table->string('city')->nullable();
             $table->string('county')->nullable();
             $table->string('postal_code')->nullable();

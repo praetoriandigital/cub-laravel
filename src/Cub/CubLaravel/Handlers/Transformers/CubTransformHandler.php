@@ -20,24 +20,8 @@ class CubTransformHandler
     /**
      * @return bool
      */
-    public function create()
+    public function handle()
     {
-        return $this->transformer->create();
-    }
-
-    /**
-     * @return bool
-     */
-    public function update()
-    {
-        return $this->transformer->update();
-    }
-
-    /**
-     * @return bool
-     */
-    public function delete()
-    {
-        return $this->transformer->delete();
+        return $this->transformer->process();
     }
 }

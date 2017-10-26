@@ -2,6 +2,7 @@
 
 use Carbon\Carbon;
 use Config;
+use Cub\CubLaravel\Contracts\CubGateway;
 use Cub\CubLaravel\Contracts\CubTransformer;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
@@ -18,6 +19,7 @@ class Cub
 {
     const ALGO = 'HS256';
     const CUB_ID_KEY = 'user';
+    const CUB_USER_NAME = 'user';
     const CUB_COOKIE = 'cubUserToken';
 
     /**
@@ -32,10 +34,12 @@ class Cub
     /**
      * Cub constructor.
      *
+     * @param \Cub\CubLaravel\Contracts\CubGateway $cubGateway
      * @param \Illuminate\Http\Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(CubGateway $cubGateway, Request $request)
     {
+        $this->cubGateway = $cubGateway;
         $this->request = $request;
     }
 
@@ -127,7 +131,20 @@ class Cub
      */
     public function getUserById($cubId)
     {
-        return $this->getObjectById(strtolower(Cub_User::class), $cubId);
+        return $this->getObjectById(self::CUB_USER_NAME, $cubId);
+    }
+
+    /**
+     * @param $cubId
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function getNewObject($objectType)
+    {
+        if ($modelName = Config::get('cub::config.maps.'.$objectType.'.model')) {
+            return app()->make($modelName);
+        }
+        return null;
     }
 
     /**
@@ -164,7 +181,7 @@ class Cub
 
         $decoded = (array) JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
 
-        $this->setCurrent($this->getObjectById(strtolower(Cub_User::class), $decoded[self::CUB_ID_KEY]), $token);
+        $this->setCurrent($this->getUserById($decoded[self::CUB_ID_KEY]), $token);
 
         return $this->currentUser();
     }
@@ -278,17 +295,9 @@ class Cub
      *
      * @return bool
      */
-    public function createObject(Cub_Object $cubObject)
+    public function objectType(Cub_Object $cubObject)
     {
-        $objectType = strtolower(get_class($cubObject));
-        if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
-            $transformer = app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'), [$cubObject]);
-        } else {
-            $transformer = new CubObjectTransformer($cubObject);
-        }
-
-        $handler = new CubTransformHandler($transformer);
-        return $handler->create();
+        return str_replace('cub_', '', strtolower(get_class($cubObject)));
     }
 
     /**
@@ -296,27 +305,50 @@ class Cub
      *
      * @return bool
      */
-    public function updateObject(Cub_Object $cubObject)
+    public function objectIsTracked(Cub_Object $cubObject)
     {
-        $objectType = strtolower(get_class($cubObject));
-        if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
-            $transformer = app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'), [$cubObject]);
-        } else {
-            $transformer = new CubObjectTransformer($cubObject);
-        }
-
-        $handler = new CubTransformHandler($transformer);
-        return $handler->update();
+        return in_array($this->objectType($cubObject), array_keys(Config::get('cub::config.maps')));
     }
 
     /**
      * @param Cub_Object $cubObject
      *
-     * @return bool
+     * @return string|null
      */
-    public function deleteObject(Cub_Object $cubObject)
+    public function getObjectExpands(Cub_Object $cubObject)
     {
-        $objectType = strtolower(get_class($cubObject));
+        if ($this->objectIsTracked($cubObject)) {
+            $relations = Config::get('cub::config.maps.'.$this->objectType($cubObject).'.relations');
+            if ($relations && is_array($relations)) {
+                $expands = '';
+                $roots = array_keys($relations);
+                $expands .= implode(',', $roots);
+                foreach ($roots as $root) {
+                    $relations = Config::get('cub::config.maps.'.$root.'.relations');
+                    if ($relations && is_array($relations)) {
+                        $relations = array_keys($relations);
+                        foreach($relations as $relation) {
+                            $expands .= ','.$root.'__'.$relation;
+                        }
+                    }
+                }
+                return $expands;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param Cub_Object $cubObject
+     *
+     * @return \Illuminate\Database\Eloquent\Model|false
+     */
+    public function processObject(Cub_Object $cubObject, $reload = true)
+    {
+        if ($reload) {
+            $cubObject = $this->cubGateway->reload($cubObject, ['expand' => Cub::getObjectExpands($cubObject)]);
+        }
+        $objectType = $this->objectType($cubObject);
         if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
             $transformer = app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'), [$cubObject]);
         } else {
@@ -324,6 +356,6 @@ class Cub
         }
 
         $handler = new CubTransformHandler($transformer);
-        return $handler->delete();
+        return $handler->handle();
     }
 }

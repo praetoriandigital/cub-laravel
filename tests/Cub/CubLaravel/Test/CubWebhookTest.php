@@ -27,7 +27,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'created']),
+            'content' => json_encode(['message' => 'processed']),
         ];
         $expectedCubId = 'usr_kjhdi7y3u4rkjsk';
         $expectedFirstName = 'Luke';
@@ -63,7 +63,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'created']),
+            'content' => json_encode(['message' => 'processed']),
         ];
         $expectedCubId = 'usr_kjhdi7y3u4rkjsk';
         $expectedFirstName = 'Luke';
@@ -95,7 +95,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'updated']),
+            'content' => json_encode(['message' => 'processed']),
         ];
         $expectedFirstName = 'Luke';
         $expectedLastName = 'Skywalker';
@@ -130,7 +130,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'deleted']),
+            'content' => json_encode(['message' => 'processed']),
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
@@ -156,7 +156,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'updated']),
+            'content' => json_encode(['message' => 'processed']),
         ];
 
         $expectedName = 'Updated Testy';
@@ -194,7 +194,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'nothing_to_update_or_create']),
+            'content' => json_encode(['message' => 'nothing_to_process']),
         ];
 
         $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
@@ -212,7 +212,7 @@ class CubWebhookTest extends CubLaravelTestCase
     {
         $expectedResponse = [
             'code' => 200,
-            'content' => json_encode(['message' => 'created']),
+            'content' => json_encode(['message' => 'processed']),
         ];
         $expectedCubId = 'grm_kjhdi7y3u4rkjsk';
         $expectedGroup = 'grp_jhklu32yiweysih';
