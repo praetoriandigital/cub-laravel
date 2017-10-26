@@ -40,13 +40,33 @@ class CubObjectTransformer implements CubTransformer
     public function __construct(Cub_Object $cubObject)
     {
         $this->cubObject = $cubObject;
-        $this->objectType = strtolower(get_class($this->cubObject));
+        $this->objectType = $this->getObjectType($this->cubObject);
         $this->model = app()->make(Config::get('cub::config.maps.'.$this->objectType.'.model'));
-        $this->fields = Config::get('cub::config.maps.'.$this->objectType.'.fields') ? : [];
+        $this->fields = $this->getFields($this->objectType);
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Model
+     * @param Cub_Object $cubObject
+     *
+     * @return string
+     */
+    protected function getObjectType(Cub_Object $cubObject)
+    {
+        return strtolower(get_class($cubObject));
+    }
+
+    /**
+     * @param $objectType
+     *
+     * @return array
+     */
+    protected function getFields($objectType)
+    {
+        return Config::get('cub::config.maps.'.$objectType.'.fields') ? : [];
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
      */
     protected function setAppObject(Model $appObject)
     {
@@ -60,15 +80,7 @@ class CubObjectTransformer implements CubTransformer
     {
         if (!empty($this->fields)) {
             $attributes = [];
-            foreach ($this->fields as $cubField => $appField) {
-                if (in_array($appField, $this->model['fillable'])) {
-                    $value = $this->cubObject->{$cubField};
-                    if (in_array($appField, $this->model->getDates())) {
-                        $value = Carbon::parse($value)->setTimezone('UTC');
-                    }
-                    $attributes[$appField] = $value;
-                }
-            }
+            $this->prepareData($attributes);
             if (count($attributes)) {
                 $appObject = $this->model->create($attributes);
                 if ($appObject && $this->cubObject->deleted) {
@@ -91,15 +103,7 @@ class CubObjectTransformer implements CubTransformer
         }
         if (!empty($this->fields) || ($this->appObject->deleted_at && !$this->cubObject->deleted)) {
             $updates = [];
-            foreach ($this->fields as $cubField => $appField) {
-                if (in_array($appField, $this->model['fillable'])) {
-                    $value = $this->cubObject->{$cubField};
-                    if (in_array($appField, $this->model->getDates())) {
-                        $value = Carbon::parse($value)->setTimezone('UTC');
-                    }
-                    $updates[$appField] = $value;
-                }
-            }
+            $this->prepareData($updates);
             if ($this->appObject->deleted_at && !$this->cubObject->deleted) {
                 if (!$this->appObject->restore()) {
                     return false;
@@ -121,6 +125,40 @@ class CubObjectTransformer implements CubTransformer
         if (!$this->appObject) {
             $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
         }
+        $updates = [];
+        $this->prepareData($updates);
+        if (count($updates)) {
+            $this->appObject->fill($updates)->save();
+        }
         return $this->appObject->delete();
+    }
+
+    /**
+     * @param array $data
+     * @param Cub_Object $cubObject
+     * @param Model $model
+     */
+    protected function prepareData(array &$data, Cub_Object $cubObject = null, Model $model = null)
+    {
+        $cubObject = $cubObject ? : $this->cubObject;
+        if ($model) {
+            $fields = $this->getFields($this->getObjectType($cubObject));
+            $fillable = $model['fillable'];
+            $dates = $model->getDates();
+        } else {
+            $fields = $this->fields;
+            $fillable = $this->model['fillable'];
+            $dates = $this->model->getDates();
+        }
+
+        foreach ($fields as $cubField => $appField) {
+            if (in_array($appField, $fillable)) {
+                $value = $cubObject->{$cubField};
+                if (in_array($appField, $dates)) {
+                    $value = Carbon::parse($value)->setTimezone('UTC');
+                }
+                $data[$appField] = $value;
+            }
+        }
     }
 }
