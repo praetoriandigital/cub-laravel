@@ -218,7 +218,7 @@ return array(
         |--------------------------------------------------------------------------
         */
 
-        'cub_user' => [
+        'user' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -241,9 +241,9 @@ return array(
             |
             */
 
-            // if you need to customize the create, update, and delete 
-            // methods, create the transformer and update here
-            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+            // if you need to customize the processing of the
+            // webhook data, create the transformer and update here
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
             |--------------------------------------------------------------------------
@@ -258,7 +258,7 @@ return array(
 
             'fields' => [
                 // update the values of this array with the corresponding
-                // fields on your User model or comment them out
+                // fields on your model or comment them out
                 // to ignore them
                 'birth_date' => 'birth_date',
                 'date_joined' => 'date_joined',
@@ -288,7 +288,7 @@ return array(
             ],
         ],
 
-        'cub_organization' => [
+        'organization' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -311,9 +311,9 @@ return array(
             |
             */
 
-            // if you need to customize the create, update, and delete 
-            // methods, create the transformer and update here
-            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+            // if you need to customize the processing of the
+            // webhook data, create the transformer and update here
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
             |--------------------------------------------------------------------------
@@ -328,8 +328,9 @@ return array(
 
             'fields' => [
                 // update the values of this array with the corresponding
-                // fields on your Organization model or comment them out
+                // fields on your model or comment them out
                 // to ignore them
+                'id' => 'cub_id',
                 'name' => 'name',
                 'employees' => 'employees',
                 'tags' => 'tags',
@@ -346,9 +347,25 @@ return array(
                 'created' => 'created',
                 'logo' => 'logo',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Organization Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub Organization related models.
+            | Related models will be updated whenever the Organization
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'state' => 'state_id',
+                'country' => 'country_id',
+            ],
         ],
 
-        'cub_member' => [
+        'member' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -371,9 +388,9 @@ return array(
             |
             */
 
-            // if you need to customize the create, update, and delete 
-            // methods, create the transformer and update here
-            'transformer' => 'Cub\CubLaravel\CubObjectTransformer',
+            // if you need to customize the processing of the
+            // webhook data, create the transformer and update here
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
             |--------------------------------------------------------------------------
@@ -388,8 +405,9 @@ return array(
 
             'fields' => [
                 // update the values of this array with the corresponding
-                // fields on your Member model or comment them out
+                // fields on your model or comment them out
                 // to ignore them
+                'id' => 'cub_id',
                 'organization' => 'organization',
                 'user' => 'user',
                 'invitation' => 'invitation',
@@ -402,9 +420,25 @@ return array(
                 'group_membership' => 'group_membership',
                 'created' => 'created',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Member Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub Member related models.
+            | Related models will be updated whenever the Member
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'organization' => 'organization_id',
+                'user' => 'user_id',
+            ],
         ],
 
-        'cub_group' => [
+        'group' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -427,6 +461,8 @@ return array(
             |
             */
 
+            // if you need to customize the processing of the
+            // webhook data, create the transformer and update here
             'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
@@ -441,6 +477,9 @@ return array(
             */
 
             'fields' => [
+                // update the values of this array with the corresponding
+                // fields on your model or comment them out
+                // to ignore them
                 'id' => 'cub_id',
                 'organization' => 'organization',
                 'name' => 'name',
@@ -448,9 +487,24 @@ return array(
                 'description' => 'description',
                 'created' => 'created',
             ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Group Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub Group related models.
+            | Related models will be updated whenever the Group
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'organization' => 'organization_id',
+            ],
         ],
 
-        'cub_groupmember' => [
+        'groupmember' => [
 
             /*
             |--------------------------------------------------------------------------
@@ -473,6 +527,8 @@ return array(
             |
             */
 
+            // if you need to customize the processing of the
+            // webhook data, create the transformer and update here
             'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
 
             /*
@@ -487,11 +543,144 @@ return array(
             */
 
             'fields' => [
+                // update the values of this array with the corresponding
+                // fields on your model or comment them out
+                // to ignore them
                 'id' => 'cub_id',
                 'group' => 'group',
                 'member' => 'member',
                 'is_admin' => 'is_admin',
                 'created' => 'created',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application GroupMember Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub GroupMember related models.
+            | Related models will be updated whenever the GroupMember
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'group' => 'group_id',
+                'member' => 'member_id',
+            ],
+        ],
+
+        'country' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Country Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the Country model which will be returned.
+            |
+            */
+
+            'model' => 'App\Country',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Country Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your Country Models.
+            |
+            */
+
+            // if you need to customize the processing of the
+            // webhook data, create the transformer and update here
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application Country Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub Country keys can
+            | be mapped to the fields on your Country model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                // update the values of this array with the corresponding
+                // fields on your model or comment them out
+                // to ignore them
+                'id' => 'cub_id',
+                'name' => 'name',
+                'code' => 'code',
+                'code2' => 'code2',
+                'code3' => 'code3',
+            ],
+        ],
+
+        'state' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Model
+            |--------------------------------------------------------------------------
+            |
+            | This is the State model which will be returned.
+            |
+            */
+
+            'model' => 'App\State',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Transformer
+            |--------------------------------------------------------------------------
+            |
+            | This is the class that will handle the creating, updating,
+            | and deleting of your State Models.
+            |
+            */
+
+            // if you need to customize the processing of the
+            // webhook data, create the transformer and update here
+            'transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Model Fields Map
+            |--------------------------------------------------------------------------
+            |
+            | This is where the mapping of the Cub State keys can
+            | be mapped to the fields on your State model.
+            | i.e. 'cub_field' => 'application_field',
+            |
+            */
+
+            'fields' => [
+                // update the values of this array with the corresponding
+                // fields on your model or comment them out
+                // to ignore them
+                'id' => 'cub_id',
+                'name' => 'name',
+                'code' => 'code',
+                'country' => 'country',
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | Application State Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub State related models.
+            | Related models will be updated whenever the State
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'country' => 'country_id',
             ],
         ],
     ],
