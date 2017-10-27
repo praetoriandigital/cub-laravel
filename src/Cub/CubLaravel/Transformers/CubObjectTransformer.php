@@ -7,6 +7,7 @@ use Cub\CubLaravel\Contracts\CubTransformer;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub_Object;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
 
 class CubObjectTransformer implements CubTransformer
 {
@@ -105,8 +106,18 @@ class CubObjectTransformer implements CubTransformer
             $data = [];
             $this->prepareData($data);
 
-            if (count($data) && !$this->appObject->fill($data)->save()) {
-                return false;
+            if (count($data)) {
+                try {
+                    if (!$this->appObject->fill($data)->save()) {
+                        return false;
+                    }
+                } catch (QueryException $e) {
+                    try {
+                        $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
+                    } catch (ObjectNotFoundByCubIdException $e) {
+                        return false;
+                    }
+                }
             }
 
             if ($this->needsToRestore() && !$this->appObject->restore()) {
