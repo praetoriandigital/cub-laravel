@@ -191,7 +191,11 @@ class CubObjectTransformer implements CubTransformer
             if (in_array($appField, $fillable)) {
                 $value = $cubObject->{$cubField};
                 if (in_array($appField, $dates)) {
-                    $value = Carbon::parse($value)->setTimezone('UTC');
+                    if ($value instanceof \DateTime) {
+                        $value = Carbon::instance($value);
+                    } else {
+                        $value = Carbon::parse($value)->setTimezone('UTC');
+                    }
                 }
                 if (!is_array($value) && !$value instanceof Cub_Object) {
                     $data[$appField] = $value;

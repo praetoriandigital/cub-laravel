@@ -17,7 +17,7 @@ class CubWebhookTest extends CubLaravelTestCase
             'last_name' => '',
             'email' => '',
             'username' => '',
-            'last_login' => '',
+            'last_login' => '2017-09-29T17:39:23Z',
             'deleted' => false,
         ]);
     }
@@ -225,7 +225,7 @@ class CubWebhookTest extends CubLaravelTestCase
             'group' => $expectedGroup,
             'member' => $expectedMember,
             'is_admin' => $expectedAdmin,
-            'created' => '',
+            'created' => '2017-09-29T17:39:23Z',
         ]);
 
         $this->assertEquals($expectedResponse['code'], $response->getStatusCode());

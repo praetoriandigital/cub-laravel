@@ -209,6 +209,7 @@ class CubLaravelTest extends CubLaravelTestCase
                 'first_name' => 'First',
                 'last_name' => 'Last',
                 'email' => 'joe@email.dev',
+                'last_login' => '2017-09-29T17:39:23Z',
             ],
         ]);
 
