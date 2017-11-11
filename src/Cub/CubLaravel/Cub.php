@@ -20,7 +20,9 @@ class Cub
     const ALGO = 'HS256';
     const CUB_ID_KEY = 'user';
     const CUB_USER_NAME = 'user';
-    const CUB_COOKIE = 'cubUserToken';
+    const CUB_ORG_NAME = 'organization';
+    const CUB_USER_COOKIE = 'cubUserToken';
+    const CUB_ORG_COOKIE = 'cubOrganizationId';
 
     /**
      * @var \Illuminate\Http\Request
@@ -30,6 +32,8 @@ class Cub
     private $currentUser = null;
 
     private $currentToken = null;
+
+    private $currentOrganizationId = null;
 
     /**
      * Cub constructor.
@@ -109,6 +113,22 @@ class Cub
     }
 
     /**
+     * @param string|null
+     *
+     * @return void
+     */
+    public function setCurrentOrganizationId($cubOrgId = null)
+    {
+        if ($cubOrgId && substr($cubOrgId, 0, 4) === 'org_') {
+            $this->currentOrganizationId = $cubOrgId;
+            $this->setCubOrganizationIdCookie($cubOrgId);
+        } else {
+            $this->currentOrganizationId = null;
+        }
+
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Model|null
      */
     public function currentUser()
@@ -125,6 +145,20 @@ class Cub
     }
 
     /**
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function currentOrganization()
+    {
+        if (!$orgCubId = $this->currentOrganizationId) {
+            if (!$orgCubId = $this->getCubOrgCookie()) {
+                return null;
+            }
+        }
+
+        return $this->getOrganizationById($orgCubId);
+    }
+
+    /**
      * @param $cubId
      *
      * @return \Illuminate\Database\Eloquent\Model
@@ -132,6 +166,16 @@ class Cub
     public function getUserById($cubId)
     {
         return $this->getObjectById(self::CUB_USER_NAME, $cubId);
+    }
+
+    /**
+     * @param $cubId
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public function getOrganizationById($cubId)
+    {
+        return $this->getObjectById(self::CUB_ORG_NAME, $cubId);
     }
 
     /**
@@ -217,7 +261,7 @@ class Cub
     public function getRequestJWT($query = 'cub_token')
     {
         if (!$token = $this->parseAuthHeader()) {
-            if (!$token = $this->getCubCookie()) {
+            if (!$token = $this->getCubUserCookie()) {
                 if (!$token = $this->request->query($query, false)) {
                     throw new NoJWTOnRequestException();
                 }
@@ -250,13 +294,27 @@ class Cub
      *
      * @return false|string
      */
-    protected function getCubCookie() 
+    protected function getCubUserCookie() 
     {
-        if (!isset($_COOKIE[self::CUB_COOKIE]) || $_COOKIE[self::CUB_COOKIE] == '') {
+        if (!isset($_COOKIE[self::CUB_USER_COOKIE]) || $_COOKIE[self::CUB_USER_COOKIE] == '') {
             return false;
         }
 
-        return $_COOKIE[self::CUB_COOKIE];
+        return $_COOKIE[self::CUB_USER_COOKIE];
+    }
+
+    /**
+     * Get token from cub cookie
+     *
+     * @return false|string
+     */
+    protected function getCubOrgCookie() 
+    {
+        if (!isset($_COOKIE[self::CUB_ORG_COOKIE]) || $_COOKIE[self::CUB_ORG_COOKIE] == '') {
+            return false;
+        }
+
+        return $_COOKIE[self::CUB_ORG_COOKIE];
     }
 
     /**
@@ -266,11 +324,11 @@ class Cub
      *
      * @return bool
      */
-    public function setCubOrganizationIdCookie($cubOrgId)
+    private function setCubOrganizationIdCookie($cubOrgId)
     {
-        if (substr($cubOrgId, 0, 4) === 'org_') {
-            unset($_COOKIE['cubOrganizationId']);
-            setcookie('cubOrganizationId', $cubOrgId, 0, '/');
+        if (!headers_sent() && substr($cubOrgId, 0, 4) === 'org_' && (!isset($_COOKIE[self::CUB_ORG_COOKIE]) || $_COOKIE[self::CUB_ORG_COOKIE] != $cubOrgId)) {
+            unset($_COOKIE[self::CUB_ORG_COOKIE]);
+            setcookie(self::CUB_ORG_COOKIE, $cubOrgId, 0, '/');
             return true;
         }
 
@@ -284,10 +342,30 @@ class Cub
      */
     public function clearCookies()
     {
-        unset($_COOKIE['cubUserToken']);
-        setcookie('cubUserToken', null, -1, '/');
-        unset($_COOKIE['cubOrganizationId']);
-        setcookie('cubOrganizationId', null, -1, '/');
+        $this->clearUserCookie();
+        $this->clearOrgCookie();
+    }
+
+    /**
+     * Clear Cub cookies
+     *
+     * @return void
+     */
+    public function clearUserCookie()
+    {
+        unset($_COOKIE[self::CUB_USER_COOKIE]);
+        setcookie(self::CUB_USER_COOKIE, null, -1, '/');
+    }
+
+    /**
+     * Clear Cub cookies
+     *
+     * @return void
+     */
+    public function clearOrgCookie()
+    {
+        unset($_COOKIE[self::CUB_ORG_COOKIE]);
+        setcookie(self::CUB_ORG_COOKIE, null, -1, '/');
     }
 
     /**

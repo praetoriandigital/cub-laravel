@@ -231,4 +231,42 @@ class CubLaravelTest extends CubLaravelTestCase
         $this->assertNotNull($state);
         $this->assertEquals($state->cub_id, $stateCubId);
     }
+
+    /** @test */
+    function current_organization_with_no_current_org_id_returns_null()
+    {
+        Cub::setCurrentOrganizationId(null);
+        $this->assertNull(Cub::currentOrganization());
+    }
+
+    /** @test */
+    function current_organization_with_erroneous_current_org_id_returns_null()
+    {
+        Cub::setCurrentOrganizationId('kajhsdkfahdk');
+        $this->assertNull(Cub::currentOrganization());
+    }
+
+    /** 
+     * @test
+     * @expectedException \Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException
+    */
+    function current_organization_with_erroneous_current_org_id_throws_error()
+    {
+        Cub::setCurrentOrganizationId('org_kajhsdkfahdk');
+        $this->assertNull(Cub::currentOrganization());
+    }
+
+    /** @test */
+    function current_organization_with_accurate_cookie_returns_organization()
+    {
+        $organization = Organization::create([
+            'cub_id' => 'org_jhakjhwsfdgdssk4esjkjahs',
+            'name' => 'Foo',
+        ]);
+
+        $this->assertNull(Cub::currentOrganization());
+
+        Cub::setCurrentOrganizationId($organization->cub_id);
+        $this->assertEquals(Cub::currentOrganization()->cub_id, $organization->cub_id);
+    }
 }
