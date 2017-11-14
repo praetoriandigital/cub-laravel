@@ -9,6 +9,7 @@ use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Handlers\Transformers\CubTransformHandler;
 use Cub\CubLaravel\Support\Login;
 use Cub\CubLaravel\Transformers\CubObjectTransformer;
+use Cub_NotFound;
 use Cub_Object;
 use Cub_User;
 use Firebase\JWT\JWT;
@@ -424,7 +425,11 @@ class Cub
     public function processObject(Cub_Object $cubObject, $reload = true)
     {
         if ($reload) {
-            $cubObject = $this->cubGateway->reload($cubObject, ['expand' => Cub::getObjectExpands($cubObject)]);
+            try {
+                $cubObject = $this->cubGateway->reload($cubObject, ['expand' => Cub::getObjectExpands($cubObject)]);
+            } catch (Cub_NotFound $e) {
+                return true;
+            }
         }
         $objectType = $this->objectType($cubObject);
         if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {

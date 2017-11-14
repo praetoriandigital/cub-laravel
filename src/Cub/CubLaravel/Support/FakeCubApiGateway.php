@@ -1,5 +1,7 @@
 <?php namespace Cub\CubLaravel\Support;
 
+use Cub_Member;
+use Cub_NotFound;
 use Cub_Object;
 use Cub_User;
 use Cub\CubLaravel\Contracts\CubGateway;
@@ -14,11 +16,16 @@ class FakeCubApiGateway implements CubGateway
      */
     public function reload(Cub_Object $cubObject, array $params = [])
     {
+        if ($cubObject instanceof Cub_Member && strpos($cubObject->id, 'cubnotfound') !== false) {
+            throw new Cub_NotFound;
+        }
+
         if ($cubObject->last_login) {
             $cubObject->last_login = new \DateTime($cubObject->last_login, new \DateTimeZone('UTC'));
         } else if ($cubObject->user instanceof Cub_User) {
             $cubObject->user->last_login = new \DateTime($cubObject->user->last_login, new \DateTimeZone('UTC'));
         }
+
         return $cubObject;
     }
 }

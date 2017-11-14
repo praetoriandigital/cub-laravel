@@ -236,4 +236,21 @@ class CubWebhookTest extends CubLaravelTestCase
         $this->assertEquals($expectedMember, $groupMember->member);
         $this->assertEquals(0, $groupMember->is_admin);
     }
+
+    /** @test */
+    function cub_not_found_returns_processed()
+    {
+        $expectedResponse = [
+            'code' => 200,
+            'content' => json_encode(['message' => 'processed']),
+        ];
+
+        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+            'object' => 'member',
+            'id' => 'mbr_cubnotfound',
+        ]);
+
+        $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
+        $this->assertEquals($expectedResponse['content'], $response->getContent());
+    }
 }
