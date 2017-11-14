@@ -422,14 +422,28 @@ class Cub
      *
      * @return \Illuminate\Database\Eloquent\Model|false
      */
-    public function processObject(Cub_Object $cubObject, $reload = true)
+    public function processObject(Cub_Object $originalCubObject, $reload = true)
     {
         if ($reload) {
             try {
-                $cubObject = $this->cubGateway->reload($cubObject, ['expand' => Cub::getObjectExpands($cubObject)]);
+                $cubObject = $this->cubGateway->reload($originalCubObject, ['expand' => Cub::getObjectExpands($originalCubObject)]);
             } catch (Cub_NotFound $e) {
-                return true;
+                if ($originalCubObject->deleted) {
+                    // We only delete the object when this happens because
+                    // the original request really shouldn't be trusted
+                    try {
+                        $objectType = $this->objectType($originalCubObject);
+                        $object = $this->getObjectById($objectType, $originalCubObject->id);
+                        return !isset($object->deleted_at) ? $object->delete() : true;
+                    } catch (ObjectNotFoundByCubIdException $e) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
             }
+        } else {
+            $cubObject = $originalCubObject;
         }
         $objectType = $this->objectType($cubObject);
         if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {

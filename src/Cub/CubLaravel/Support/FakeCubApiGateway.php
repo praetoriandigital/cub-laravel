@@ -16,7 +16,7 @@ class FakeCubApiGateway implements CubGateway
      */
     public function reload(Cub_Object $cubObject, array $params = [])
     {
-        if ($cubObject instanceof Cub_Member && strpos($cubObject->id, 'cubnotfound') !== false) {
+        if ($cubObject->deleted) {
             throw new Cub_NotFound;
         }
 
