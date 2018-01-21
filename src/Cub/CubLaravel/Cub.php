@@ -51,16 +51,21 @@ class Cub
     /**
      * @param $username
      * @param $password
+     * @param bool $setCookie
      *
      * @return Login
      */
-    public function login($username, $password)
+    public function login($username, $password, $setCookie = false)
     {
         $cub_user = Cub_User::login($username, $password);
         $user = $this->getUserById($cub_user->id);
 
         $this->setCurrentUser($user);
         $this->setCurrentToken($cub_user->token);
+        
+        if ($setCookie) {
+            $this->setCubUserCookie($cub_user->token);
+        }
 
         return new Login($user, $cub_user->token);
     }
@@ -71,6 +76,7 @@ class Cub
     public function logout()
     {
         $this->setCurrent();
+        $this->clearCookies();
     }
 
     /**
@@ -283,7 +289,7 @@ class Cub
     {
         $header = $this->request->headers->get($header);
 
-        if (! starts_with(strtolower($header), $method)) {
+        if (!starts_with(strtolower($header), $method)) {
             return false;
         }
 
@@ -319,6 +325,26 @@ class Cub
     }
 
     /**
+     * Set the Cub User cookie
+     *
+     * @param string $token
+     *
+     * @return bool
+     */
+    private function setCubUserCookie($token)
+    {
+        JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
+
+        if (!headers_sent() && (!isset($_COOKIE[self::CUB_USER_COOKIE]) || $_COOKIE[self::CUB_USER_COOKIE] != $token)) {
+            unset($_COOKIE[self::CUB_USER_COOKIE]);
+            setcookie(self::CUB_USER_COOKIE, $token, 0, '/');
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Set the Cub Organization cookie
      *
      * @param string $cubOrgId
@@ -343,8 +369,10 @@ class Cub
      */
     public function clearCookies()
     {
-        $this->clearUserCookie();
-        $this->clearOrgCookie();
+        if (!headers_sent()) {
+            $this->clearUserCookie();
+            $this->clearOrgCookie();
+        }
     }
 
     /**
