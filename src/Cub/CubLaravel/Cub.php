@@ -529,4 +529,22 @@ class Cub
         }
         return Cub_Object::fromArray(['object' => $objectName]);
     }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
+     * @param array $params
+     *
+     * @return bool
+     */
+    public function makeOrgAdmin(Model $appObject, array $params = [])
+    {
+        $memberClassName = Config::get('cub::config.maps.member.model');
+        $memberClass = new $memberClassName;
+        if ($appObject instanceof $memberClass) {
+            $result = Cub_Api::post('members/'.$appObject->cub_id.'/permissions', $params);
+            return $result['is_admin'];
+        }
+
+        return false;
+    }
 }
