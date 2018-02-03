@@ -483,4 +483,50 @@ class Cub
         $handler = new CubTransformHandler($transformer);
         return $handler->handle();
     }
+    
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
+     * @param array $params
+     *
+     * @return \Illuminate\Database\Eloquent\Model|false
+     */
+    public function create(Model $appObject, array $params = [])
+    {
+        $cubObject = $this->convertAppObject($appObject);
+
+        return $this->processObject(Cub_Object::execCreate(get_class($cubObject), $params));
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
+     * @param array $params
+     *
+     * @return \Illuminate\Database\Eloquent\Model|false
+     */
+    public function update(Model $appObject, array $params = [])
+    {
+        $cubObject = $this->convertAppObject($appObject);
+        $instance = new $cubObject($params);
+
+        return $this->processObject($instance->execSave());
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
+     *
+     * @return Cub_Object
+     */
+    private function convertAppObject(Model $appObject)
+    {
+        $maps = Config::get('cub::config.maps');
+        $objectName = '';
+        $appObjectName = get_class($appObject);
+        foreach ($maps as $k => $map) {
+            if ($map['model'] == $appObjectName) {
+                $objectName = $k;
+                break;
+            }
+        }
+        return Cub_Object::fromArray(['object' => $objectName]);
+    }
 }

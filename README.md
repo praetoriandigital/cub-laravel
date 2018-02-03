@@ -165,7 +165,7 @@ return array(
     |
     */
     
-    'public_key' => getEnv('CUB_PUBLIC'), // set to you application's public key
+    'public_key' => getEnv('CUB_PUBLIC'), // set to your application's public key
     
     /*
     |--------------------------------------------------------------------------
@@ -177,6 +177,17 @@ return array(
     */
     
     'secret_key' => getEnv('CUB_SECRET'), // you should keep this as an environment variable
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Site Uid
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub site uid.
+    |
+    */
+
+    'site' => getEnv('CUB_SITE'), // this is needed for creation of cub objects
     
     /*
     |--------------------------------------------------------------------------
@@ -188,6 +199,17 @@ return array(
     */
     
     'api_url' => getEnv('CUB_API_URL'), // set to your application's api url
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cub Application Webhook Domain
+    |--------------------------------------------------------------------------
+    |
+    | This is the Cub application webhook url domain.
+    |
+    */
+
+    'webhook_domain' => getEnv('CUB_WEBHOOK_DOMAIN'), // this give you more control over the webhook
     
     /*
     |--------------------------------------------------------------------------
