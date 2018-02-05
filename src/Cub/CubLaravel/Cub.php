@@ -9,6 +9,7 @@ use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Handlers\Transformers\CubTransformHandler;
 use Cub\CubLaravel\Support\Login;
 use Cub\CubLaravel\Transformers\CubObjectTransformer;
+use Cub_Api;
 use Cub_NotFound;
 use Cub_Object;
 use Cub_User;
