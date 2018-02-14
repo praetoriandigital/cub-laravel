@@ -10,6 +10,7 @@ use Cub\CubLaravel\Handlers\Transformers\CubTransformHandler;
 use Cub\CubLaravel\Support\Login;
 use Cub\CubLaravel\Transformers\CubObjectTransformer;
 use Cub_Api;
+use Cub_ApiError;
 use Cub_NotFound;
 use Cub_Object;
 use Cub_User;
@@ -548,5 +549,42 @@ class Cub
         }
 
         return false;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
+     *
+     * @return bool
+     */
+    public function removeMember(Model $appObject)
+    {
+        $memberClassName = Config::get('cub::config.maps.member.model');
+        $memberClass = new $memberClassName;
+        if ($appObject instanceof $memberClass) {
+            $cubObject = $this->convertAppObject($appObject);
+            $instance = new $cubObject(['id' => $appObject->cub_id]);
+            try {
+                return $instance->execRemove();
+            } catch (Cub_ApiError $e) {
+                if ($e->getHttpCode() == 200) {
+                    $this->refreshObject($appObject);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function refreshObject(Model $appObject)
+    {
+        $cubObject = $this->convertAppObject($appObject);
+        $instance = new $cubObject(['id' => $appObject->cub_id]);
+        return $this->processObject($instance);
     }
 }

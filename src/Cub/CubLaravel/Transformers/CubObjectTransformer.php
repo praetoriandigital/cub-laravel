@@ -198,7 +198,7 @@ class CubObjectTransformer implements CubTransformer
                     }
                 }
                 if (!is_array($value) && !$value instanceof Cub_Object) {
-                    $data[$appField] = $value;
+                    $data[$appField] = is_bool($value) ? (int) $value : $value;
                 }
             }
         }
