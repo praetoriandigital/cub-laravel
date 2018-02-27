@@ -458,17 +458,11 @@ class Cub
             try {
                 $cubObject = $this->cubGateway->reload($originalCubObject, ['expand' => Cub::getObjectExpands($originalCubObject)]);
             } catch (Cub_NotFound $e) {
-                if ($originalCubObject->deleted) {
-                    // We only delete the object when this happens because
-                    // the original request really shouldn't be trusted
-                    try {
-                        $objectType = $this->objectType($originalCubObject);
-                        $object = $this->getObjectById($objectType, $originalCubObject->id);
-                        return !isset($object->deleted_at) ? $object->delete() : true;
-                    } catch (ObjectNotFoundByCubIdException $e) {
-                        return true;
-                    }
-                } else {
+                try {
+                    $objectType = $this->objectType($originalCubObject);
+                    $object = $this->getObjectById($objectType, $originalCubObject->id);
+                    return !isset($object->deleted_at) ? $object->delete() : true;
+                } catch (ObjectNotFoundByCubIdException $e) {
                     return true;
                 }
             }
