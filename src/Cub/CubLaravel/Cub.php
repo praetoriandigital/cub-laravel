@@ -479,6 +479,24 @@ class Cub
         $handler = new CubTransformHandler($transformer);
         return $handler->handle();
     }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Model $appObject
+     * @param array $params
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
+    public function get(Model $appObject, array $params = [])
+    {
+        $cubObject = $this->convertAppObject($appObject);
+        $response = Cub_Object::execGet(get_class($cubObject), null, $params);
+
+        if (is_array($response) && count($response) == 1) {
+            return $this->processObject(array_shift($response));
+        }
+
+        return null;
+    }
     
     /**
      * @param \Illuminate\Database\Eloquent\Model $appObject
