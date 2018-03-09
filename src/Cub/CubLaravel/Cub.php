@@ -557,7 +557,12 @@ class Cub
         if ($appObject instanceof $memberClass) {
             $result = Cub_Api::post('members/'.$appObject->cub_id.'/permissions', $params);
             $comparisonArray = array_intersect_key($result, $params);
-            return ($comparisonArray == $params);
+            if ($comparisonArray == $params) {
+                return $this->processObject([
+                    'object' => 'member',
+                    'id' => $appObject->cub_id,
+                ]);
+            }
         }
 
         return false;
