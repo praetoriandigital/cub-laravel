@@ -465,6 +465,8 @@ class Cub
                 } catch (ObjectNotFoundByCubIdException $e) {
                     return true;
                 }
+            } catch (Cub_Forbidden $e) {
+                return true;
             }
         } else {
             $cubObject = $originalCubObject;
