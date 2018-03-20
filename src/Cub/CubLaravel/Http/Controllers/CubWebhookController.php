@@ -4,6 +4,7 @@ use Config;
 use Cub;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Traits\RespondTrait;
+use Cub_Forbidden;
 use Cub_Object;
 use Illuminate\Routing\Controller;
 use Input;
@@ -26,6 +27,8 @@ class CubWebhookController extends Controller
                 return $this->respondJSON('error_processing', 500);
             }
             return $this->respondJSON('nothing_to_process', 200);
+        } catch (Cub_Forbidden $e) {
+            return $this->respondJSON('forbidden', 200);
         } catch (Exception $e) {
             return $this->respondJSON('internal_error', 500);
         }

@@ -1,5 +1,6 @@
 <?php namespace Cub\CubLaravel\Support;
 
+use Cub_Forbidden;
 use Cub_Member;
 use Cub_NotFound;
 use Cub_Object;
@@ -18,6 +19,10 @@ class FakeCubApiGateway implements CubGateway
     {
         if ($cubObject->deleted) {
             throw new Cub_NotFound;
+        }
+
+        if ($cubObject->forbidden) {
+            throw new Cub_Forbidden;
         }
 
         if ($cubObject->last_login) {

@@ -236,4 +236,22 @@ class CubWebhookTest extends CubLaravelTestCase
         $this->assertEquals($expectedMember, $groupMember->member);
         $this->assertEquals(0, $groupMember->is_admin);
     }
+
+    /** @test */
+    function cub_forbidden_returns_success()
+    {
+        $expectedResponse = [
+            'code' => 200,
+            'content' => json_encode(['message' => 'forbidden']),
+        ];
+
+        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+            'object' => 'user',
+            'id' => 'usr_98234wer9syd',
+            'forbidden' => true,
+        ]);
+
+        $this->assertEquals($expectedResponse['code'], $response->getStatusCode());
+        $this->assertEquals($expectedResponse['content'], $response->getContent());
+    }
 }
