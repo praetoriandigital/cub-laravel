@@ -416,7 +416,17 @@ class Cub
      */
     public function objectIsTracked(Cub_Object $cubObject)
     {
-        return in_array($this->objectType($cubObject), array_keys(Config::get('cub::config.maps')));
+        return $this->objectNameIsTracked($this->objectType($cubObject));
+    }
+
+    /**
+     * @param Cub_Object $cubObject
+     *
+     * @return bool
+     */
+    public function objectNameIsTracked($cubObjectName)
+    {
+        return in_array($cubObjectName, array_keys(Config::get('cub::config.maps')));
     }
 
     /**

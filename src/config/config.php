@@ -288,6 +288,7 @@ return array(
             'relations' => [
                 'organization' => 'organization_id',
                 'user' => 'user_id',
+                'group_membership' => 'groupmember',
             ],
         ],
 
@@ -399,6 +400,25 @@ return array(
             /*
             |--------------------------------------------------------------------------
             | Application GroupMember Model Related Models
+            |--------------------------------------------------------------------------
+            |
+            | This is where to set the Cub GroupMember related models.
+            | Related models will be updated whenever the GroupMember
+            | is updated.
+            |
+            */
+
+            'relations' => [
+                'group' => 'group_id',
+                'member' => 'member_id',
+            ],
+        ],
+
+        'group_membership' => [
+
+            /*
+            |--------------------------------------------------------------------------
+            | Placeholder for the Member Group Memberships expands
             |--------------------------------------------------------------------------
             |
             | This is where to set the Cub GroupMember related models.

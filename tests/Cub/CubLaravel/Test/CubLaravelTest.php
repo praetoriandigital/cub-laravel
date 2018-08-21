@@ -141,7 +141,7 @@ class CubLaravelTest extends CubLaravelTestCase
     /** @test */
     public function get_expands_is_accurate()
     {
-        $expected = 'organization,user,organization__state,organization__country';
+        $expected = 'organization,user,group_membership,organization__state,organization__country,group_membership__group,group_membership__member';
 
         $object = Cub_Object::fromArray([
             'object' => 'member',

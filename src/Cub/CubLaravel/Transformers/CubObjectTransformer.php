@@ -221,11 +221,23 @@ class CubObjectTransformer implements CubTransformer
         }
 
         foreach ($relations as $cubField => $appField) {
+            $value = $cubObject->{$cubField};
             if (in_array($appField, $fillable)) {
-                $value = $cubObject->{$cubField};
                 if ($value instanceof Cub_Object && Cub::objectIsTracked($value)) {
                     if ($appObject = Cub::processObject($value, false)) {
                         $data[$appField] = $appObject->id;
+                    }
+                }
+            } else if (Cub::objectNameIsTracked($appField)) {
+                if (is_array($value)) {
+                    foreach ($value as $v) {
+                        if ($v instanceof Cub_Object && Cub::objectIsTracked($v)) {
+                            Cub::processObject($v, false);
+                        }
+                    }
+                } else {
+                    if ($value instanceof Cub_Object && Cub::objectIsTracked($value)) {
+                        Cub::processObject($value, false);
                     }
                 }
             }
