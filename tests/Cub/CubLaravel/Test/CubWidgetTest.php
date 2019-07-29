@@ -27,7 +27,7 @@ class CubWidgetTest extends CubLaravelTestCase
         $expected = '<script>'
                   . 'var cubAsyncInit = function(cub) {'
                   . 'cub.start({'
-                  . 'apiKey: "'.$this->app['config']->get('cub::config.public_key').'"'
+                  . 'apiKey: "'.config('cub.public_key').'"'
                   . '});'
                   . '};'
                   . '</script>';

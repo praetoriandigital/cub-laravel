@@ -3,7 +3,7 @@
 use Cub\CubLaravel\Contracts\CubGateway;
 use Cub\CubLaravel\Cub;
 use Cub\CubLaravel\CubWidget;
-use Cub\CubLaravel\Filters\CubAuthFilter;
+use Cub\CubLaravel\Middleware\CubAuthMiddleware;
 use Cub\CubLaravel\Support\CubApiGateway;
 use Cub_Config;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -18,6 +18,10 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected $defer = false;
 
+    public $middleware = [
+        'cub-auth' => CubAuthMiddleware::class,
+    ];
+
     /**
      * Bootstrap the application events.
      *
@@ -25,15 +29,16 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function boot()
     {
-        $this->package('cub/cub-laravel', 'cub');
+        $this->publishes([
+            __DIR__.'/../../config/cub.php' => config_path('cub.php'),
+        ]);
 
-        // register the filter
-        $this->app['router']->filter('cub-auth', 'pd.cub.auth-filter');
+        $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
 
-        include __DIR__ . '/Http/routes.php';
+        $this->loadMigrationsFrom(__DIR__.'/../../migrations');
 
-        Cub_Config::$api_key = $this->app['config']->get('cub::config.secret_key');
-        Cub_Config::$api_url = $this->app['config']->get('cub::config.api_url');
+        Cub_Config::$api_key = config('cub.secret_key');
+        Cub_Config::$api_url = config('cub.api_url');
     }
 
     /**
@@ -43,9 +48,11 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('pd.cub.auth-filter', function ($app) {
-            return new CubAuthFilter($app->make('cub'));
-        });
+        $this->mergeConfigFrom(__DIR__.'/../../config/cub.php', 'cub');
+
+//        $this->app->singleton('cub.auth-middleware', function ($app) {
+//            return new CubAuthMiddleware($app->make('cub'));
+//        });
 
         $this->app->bind(CubGateway::class, CubApiGateway::class);
         $this->app->bind('cub', Cub::class);

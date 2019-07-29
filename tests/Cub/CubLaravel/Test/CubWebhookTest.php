@@ -10,7 +10,7 @@ class CubWebhookTest extends CubLaravelTestCase
     /** @test */
     public function webhook_url_is_registered()
     {
-        $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $this->call('POST', config('cub.webhook_url'), [
             'object' => 'user',
             'id' => $this->details['id'],
             'first_name' => '',
@@ -36,7 +36,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedUsername = 'lukie1';
         $lastLogin = '2017-09-29T17:39:23Z';
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'user',
             'id' => $expectedCubId,
             'first_name' => $expectedFirstName,
@@ -72,7 +72,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedUsername = 'lukie1';
         $lastLogin = '2017-09-29T17:39:23Z';
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'user',
             'id' => $expectedCubId,
             'first_name' => $expectedFirstName,
@@ -103,7 +103,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedUsername = 'lukie1';
         $lastLogin = '2017-09-29T17:39:23Z';
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'user',
             'id' => $this->details['id'],
             'first_name' => $expectedFirstName,
@@ -133,7 +133,7 @@ class CubWebhookTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'processed']),
         ];
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'user',
             'id' => $this->details['id'],
             'first_name' => '',
@@ -161,7 +161,7 @@ class CubWebhookTest extends CubLaravelTestCase
 
         $expectedName = 'Updated Testy';
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'organization',
             'id' => 'org_jhakjhwk4esjkjahs',
             'name' => $expectedName,
@@ -197,7 +197,7 @@ class CubWebhookTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'nothing_to_process']),
         ];
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'site',
             'id' => 'ste_jhakjhwk4esjkjahs',
             'deleted' => false,
@@ -219,7 +219,7 @@ class CubWebhookTest extends CubLaravelTestCase
         $expectedMember = 'mbr_jhq2iu3wye8stkjkhlkd';
         $expectedAdmin = false;
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'groupmember',
             'id' => $expectedCubId,
             'group' => $expectedGroup,
@@ -245,7 +245,7 @@ class CubWebhookTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'forbidden']),
         ];
 
-        $response = $this->call('POST', $this->app['config']->get('cub::config.webhook_url'), [
+        $response = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'user',
             'id' => 'usr_98234wer9syd',
             'forbidden' => true,

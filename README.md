@@ -17,14 +17,14 @@ Use for authenticating your users with Cub. Keep your user data up-to-date with 
 
 ## Compatibility
 
-Currently only compatible with Laravel 4.2.*
+Currently compatible with Laravel 5.*
 
 ## Installation
 
 Via Composer
 
 ``` bash
-$ composer require "cub/cub-laravel:~1.0"
+$ composer require "cub/cub-laravel:~2.0"
 ```
 
 After updating composer, add the CubLaravelServiceProvider to the `providers` array in `config/app.php`

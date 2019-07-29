@@ -194,7 +194,7 @@ class Cub
      */
     public function getNewObject($objectType)
     {
-        if ($modelName = Config::get('cub::config.maps.'.$objectType.'.model')) {
+        if ($modelName = config('cub.maps.'.$objectType.'.model')) {
             return app()->make($modelName);
         }
         return null;
@@ -208,11 +208,11 @@ class Cub
      */
     public function getObjectById($objectType, $cubId)
     {
-        $model = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'));
+        $model = app()->make(config('cub.maps.'.$objectType.'.model'));
         if (method_exists($model, 'withTrashed')) {
-            $object = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'))->withTrashed()->whereCubId($cubId)->first();    
+            $object = app()->make(config('cub.maps.'.$objectType.'.model'))->withTrashed()->whereCubId($cubId)->first();
         } else {
-            $object = app()->make(Config::get('cub::config.maps.'.$objectType.'.model'))->whereCubId($cubId)->first();
+            $object = app()->make(config('cub.maps.'.$objectType.'.model'))->whereCubId($cubId)->first();
         }
         
         if (!$object) {
@@ -232,7 +232,7 @@ class Cub
             $token = $this->getRequestJWT();
         }
 
-        $decoded = (array) JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
+        $decoded = (array) JWT::decode($token, config('cub.secret_key'), [self::ALGO]);
 
         $this->setCurrent($this->getUserById($decoded[self::CUB_ID_KEY]), $token);
 
@@ -253,7 +253,7 @@ class Cub
         }
 
         try {
-            $decoded = (array) JWT::decode($jwt, Config::get('cub::config.secret_key'), [self::ALGO]);
+            $decoded = (array) JWT::decode($jwt, config('cub.secret_key'), [self::ALGO]);
         } catch (\Exception $e) {
             return false;
         }
@@ -335,7 +335,7 @@ class Cub
      */
     private function setCubUserCookie($token)
     {
-        JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
+        JWT::decode($token, config('cub.secret_key'), [self::ALGO]);
 
         if (!headers_sent() && (!isset($_COOKIE[self::CUB_USER_COOKIE]) || $_COOKIE[self::CUB_USER_COOKIE] != $token)) {
             unset($_COOKIE[self::CUB_USER_COOKIE]);
@@ -426,7 +426,7 @@ class Cub
      */
     public function objectNameIsTracked($cubObjectName)
     {
-        return in_array($cubObjectName, array_keys(Config::get('cub::config.maps')));
+        return in_array($cubObjectName, array_keys(config('cub.maps')));
     }
 
     /**
@@ -437,13 +437,13 @@ class Cub
     public function getObjectExpands(Cub_Object $cubObject)
     {
         if ($this->objectIsTracked($cubObject)) {
-            $relations = Config::get('cub::config.maps.'.$this->objectType($cubObject).'.relations');
+            $relations = config('cub.maps.'.$this->objectType($cubObject).'.relations');
             if ($relations && is_array($relations)) {
                 $expands = '';
                 $roots = array_keys($relations);
                 $expands .= implode(',', $roots);
                 foreach ($roots as $root) {
-                    $relations = Config::get('cub::config.maps.'.$root.'.relations');
+                    $relations = config('cub.maps.'.$root.'.relations');
                     if ($relations && is_array($relations)) {
                         $relations = array_keys($relations);
                         foreach($relations as $relation) {
@@ -480,8 +480,8 @@ class Cub
             $cubObject = $originalCubObject;
         }
         $objectType = $this->objectType($cubObject);
-        if (Config::get('cub::config.maps.'.$objectType.'.transformer')) {
-            $transformer = app()->make(Config::get('cub::config.maps.'.$objectType.'.transformer'), [$cubObject]);
+        if (config('cub.maps.'.$objectType.'.transformer')) {
+            $transformer = app()->makeWith(config('cub.maps.'.$objectType.'.transformer'), ['cubObject' => $cubObject]);
         } else {
             $transformer = new CubObjectTransformer($cubObject);
         }
@@ -542,7 +542,7 @@ class Cub
      */
     private function convertAppObject(Model $appObject)
     {
-        $maps = Config::get('cub::config.maps');
+        $maps = config('cub.maps');
         $objectName = '';
         $appObjectName = get_class($appObject);
         foreach ($maps as $k => $map) {
@@ -562,7 +562,7 @@ class Cub
      */
     public function updateMemberPermissions(Model $appObject, array $params = [])
     {
-        $memberClassName = Config::get('cub::config.maps.member.model');
+        $memberClassName = config('cub.maps.member.model');
         $memberClass = new $memberClassName;
         if ($appObject instanceof $memberClass) {
             $result = Cub_Api::post('members/'.$appObject->cub_id.'/permissions', $params);
@@ -582,7 +582,7 @@ class Cub
      */
     public function removeMember(Model $appObject)
     {
-        $memberClassName = Config::get('cub::config.maps.member.model');
+        $memberClassName = config('cub.maps.member.model');
         $memberClass = new $memberClassName;
         if ($appObject instanceof $memberClass) {
             $cubObject = $this->convertAppObject($appObject);

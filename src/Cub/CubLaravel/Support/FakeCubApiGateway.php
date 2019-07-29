@@ -27,7 +27,7 @@ class FakeCubApiGateway implements CubGateway
 
         if ($cubObject->last_login) {
             $cubObject->last_login = new \DateTime($cubObject->last_login, new \DateTimeZone('UTC'));
-        } else if ($cubObject->user instanceof Cub_User) {
+        } elseif ($cubObject->user instanceof Cub_User) {
             $cubObject->user->last_login = new \DateTime($cubObject->user->last_login, new \DateTimeZone('UTC'));
         }
 

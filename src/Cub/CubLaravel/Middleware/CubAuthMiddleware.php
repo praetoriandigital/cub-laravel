@@ -1,5 +1,6 @@
-<?php namespace Cub\CubLaravel\Filters;
+<?php namespace Cub\CubLaravel\Middleware;
 
+use Closure;
 use Cub\CubLaravel\Cub;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
@@ -8,7 +9,7 @@ use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Response;
 
-class CubAuthFilter
+class CubAuthMiddleware
 {
     use RespondTrait;
 
@@ -18,7 +19,7 @@ class CubAuthFilter
     protected $cub;
 
     /**
-     * CubAuthFilter constructor.
+     * CubAuthMiddleware constructor.
      *
      * @param Cub $cub
      */
@@ -28,11 +29,13 @@ class CubAuthFilter
     }
 
     /**
-     * Filter the request
+     * Handle an incoming request.
      *
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
      */
-    public function filter()
+    public function handle($request, Closure $next)
     {
         try {
             $token = $this->cub->getRequestJWT();
@@ -51,5 +54,7 @@ class CubAuthFilter
         } catch (\Exception $e) {
             return $this->respondJSON('error_processing_token', 500);
         }
+
+        return $next($request);
     }
 }

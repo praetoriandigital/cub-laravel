@@ -14,8 +14,8 @@ class CubAddCubIdToUsersTable extends Migration
      */
     public function up()
     {
-        if ($modelName = Config::get('cub::config.maps.user.model')) {
-            $tableName = App::make($modelName)->getTable();
+        if ($modelName = config('cub.maps.user.model')) {
+            $tableName = app()->make($modelName)->getTable();
             if (Schema::hasTable($tableName) && !Schema::hasColumn($tableName, self::CUB_ID)) {
                 Schema::table($tableName, function (Blueprint $table) {
                     $table->string(self::CUB_ID)->after('id')->default('');
@@ -37,8 +37,8 @@ class CubAddCubIdToUsersTable extends Migration
      */
     public function down()
     {
-        if ($modelName = Config::get('cub::config.maps.user.model')) {
-            $tableName = App::make($modelName)->getTable();
+        if ($modelName = config('cub.maps.user.model')) {
+            $tableName = app()->make($modelName)->getTable();
             if (Schema::hasTable($tableName) && Schema::hasColumn($tableName, self::CUB_ID)) {
                 Schema::table($tableName, function (Blueprint $table) {
                     $table->dropColumn(self::CUB_ID);

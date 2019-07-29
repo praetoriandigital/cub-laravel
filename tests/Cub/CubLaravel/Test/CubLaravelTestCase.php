@@ -18,8 +18,6 @@ abstract class CubLaravelTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->app['path.base'] = __DIR__ . '/../../../../src';
-
         $this->details = [
             'original_username' => 'ivelum',
             'first_name' => 'do not remove of modify',
@@ -32,7 +30,7 @@ abstract class CubLaravelTestCase extends TestCase
         ];
 
         $this->app->bind(CubGateway::class, FakeCubApiGateway::class);
-        $this->modifyConfiguration($this->app);
+        $this->modifyConfiguration();
         $this->prepareDatabase();
         $this->prepareRoutes();
     }
@@ -46,9 +44,10 @@ abstract class CubLaravelTestCase extends TestCase
     }
 
     /**
+     * @param $app
      * @return array
      */
-    protected function getPackageAliases()
+    protected function getPackageAliases($app)
     {
         return [
           'Cub' => 'Cub\CubLaravel\Facades\Cub',
@@ -64,6 +63,7 @@ abstract class CubLaravelTestCase extends TestCase
     */
     protected function getEnvironmentSetUp($app)
     {
+        $app->setBasePath(__DIR__ . '/../../../../src');
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
@@ -76,16 +76,16 @@ abstract class CubLaravelTestCase extends TestCase
     /**
      * Perform user specific configuration.
      */
-    protected function modifyConfiguration($app)
+    protected function modifyConfiguration()
     {
-        $app['config']->set('cub::config.maps.user.model', 'Cub\CubLaravel\Test\Models\User');
-        $app['config']->set('cub::config.maps.user.transformer', 'Cub\CubLaravel\Transformers\CubObjectTransformer');
-        $app['config']->set('cub::config.maps.organization.model', 'Cub\CubLaravel\Test\Models\Organization');
-        $app['config']->set('cub::config.maps.member.model', 'Cub\CubLaravel\Test\Models\Member');
-        $app['config']->set('cub::config.maps.group.model', null);
-        $app['config']->set('cub::config.maps.groupmember.model', 'Cub\CubLaravel\Test\Models\GroupMember');
-        $app['config']->set('cub::config.maps.country.model', 'Cub\CubLaravel\Test\Models\Country');
-        $app['config']->set('cub::config.maps.state.model', 'Cub\CubLaravel\Test\Models\State');
+        config(['cub.maps.user.model' => 'Cub\CubLaravel\Test\Models\User']);
+        config(['cub.maps.user.transformer' => 'Cub\CubLaravel\Transformers\CubObjectTransformer']);
+        config(['cub.maps.organization.model' => 'Cub\CubLaravel\Test\Models\Organization']);
+        config(['cub.maps.member.model' => 'Cub\CubLaravel\Test\Models\Member']);
+        config(['cub.maps.group.model' => null]);
+        config(['cub.maps.groupmember.model' => 'Cub\CubLaravel\Test\Models\GroupMember']);
+        config(['cub.maps.country.model' => 'Cub\CubLaravel\Test\Models\Country']);
+        config(['cub.maps.state.model' => 'Cub\CubLaravel\Test\Models\State']);
     }
 
     /**
@@ -93,14 +93,12 @@ abstract class CubLaravelTestCase extends TestCase
      */
     protected function prepareDatabase()
     {
-        $artisan = $this->app->make('artisan');
-
-        $artisan->call('migrate', [
+        $this->artisan('migrate', [
             '--database' => 'testbench',
             '--path'     => '../tests/Cub/CubLaravel/Test/migrations',
         ]);
 
-        $artisan->call('migrate', [
+        $this->artisan('migrate', [
             '--database' => 'testbench',
             '--path'     => '/migrations',
         ]);
@@ -115,10 +113,10 @@ abstract class CubLaravelTestCase extends TestCase
      */
     protected function prepareRoutes()
     {
-        $this->app['router']->get('restricted', ['before' => 'cub-auth', function () {
-            return json_encode(['message' => 'Hello, Cub User '.Cub::currentUser()->cub_id]);
-        }]);
+        app('router')->aliasMiddleware('cub-auth', Cub\CubLaravel\Middleware\CubAuthMiddleware::class);
 
-        $this->app['router']->enableFilters();
+        app('router')->get('restricted', ['middleware' => 'cub-auth', function () {
+            return response()->json(['message' => 'Hello, Cub User '.Cub::currentUser()->cub_id]);
+        }]);
     }
 }

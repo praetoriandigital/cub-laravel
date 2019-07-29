@@ -18,7 +18,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = $login->getUser();
 
-        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.user.model'), $user);
+        $this->assertInstanceOf(config('cub.maps.user.model'), $user);
         $this->assertEquals($user->email, $this->credentials['username']);
     }
 
@@ -28,7 +28,7 @@ class CubLaravelTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = Cub::currentUser();
 
-        $this->assertInstanceOf($this->app['config']->get('cub::config.maps.user.model'), $user);
+        $this->assertInstanceOf(config('cub.maps.user.model'), $user);
         $this->assertEquals($login->getUser(), $user);
     }
 

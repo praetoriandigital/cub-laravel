@@ -1,6 +1,5 @@
 <?php namespace Cub\CubLaravel\Traits;
 
-use Response;
 
 trait RespondTrait
 {
@@ -19,6 +18,6 @@ trait RespondTrait
             $key = 'error';
         }
 
-        return Response::json([$key => $message], $status);
+        return response()->json([$key => $message], $status);
     }
 }

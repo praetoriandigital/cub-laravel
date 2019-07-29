@@ -37,12 +37,12 @@ class CubCreateOrganizationsTable extends Migration
         });
 
         DB::table('organizations')->insert([
-        [
-        'id' => 1,
-        'name' => 'Testy',
-        'created_at' => '2013-12-13 15:35:33',
-        'updated_at' => '2016-03-21 16:12:18',
-        ],
+            [
+                'id' => 1,
+                'name' => 'Testy',
+                'created_at' => '2013-12-13 15:35:33',
+                'updated_at' => '2016-03-21 16:12:18',
+            ],
         ]);
     }
 

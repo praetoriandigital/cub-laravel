@@ -35,7 +35,7 @@ class CubWidget
         $script = '<script>'
                 . 'var cubAsyncInit = function(cub) {'
                 . 'cub.start({'
-                . 'apiKey: "'.Config::get('cub::config.public_key').'"'
+                . 'apiKey: "'.config('cub.public_key').'"'
                 . '});'
                 . '};'
                 . '</script>';

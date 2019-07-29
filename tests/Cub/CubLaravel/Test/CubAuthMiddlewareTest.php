@@ -4,10 +4,10 @@ use Cub;
 use Cub\CubLaravel\Test\Models\User;
 use Firebase\JWT\JWT;
 
-class CubAuthFilterTest extends CubLaravelTestCase
+class CubAuthMiddlewareTest extends CubLaravelTestCase
 {
     /** @test */
-    public function filter_with_valid_token()
+    public function request_with_valid_token()
     {
         $expected = [
             'code' => 200,
@@ -17,14 +17,14 @@ class CubAuthFilterTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $jwt = $login->getToken();
 
-        $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
+        $actual = $this->get('restricted?cub_token='.$jwt);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_valid_token_header()
+    public function request_with_valid_token_header()
     {
         $expected = [
             'code' => 200,
@@ -34,28 +34,28 @@ class CubAuthFilterTest extends CubLaravelTestCase
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $jwt = $login->getToken();
 
-        $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
+        $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_needs_token()
+    public function request_needs_token()
     {
         $expected = [
             'code' => 400,
             'content' => json_encode(['error' => 'token_not_provided']),
         ];
 
-        $actual = $this->call('GET', 'restricted');
+        $actual = $this->get('restricted');
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_expired_token()
+    public function request_with_expired_token()
     {
         $expected = [
             'code' => 401,
@@ -66,16 +66,16 @@ class CubAuthFilterTest extends CubLaravelTestCase
             'exp' => time() - 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
+        $jwt = JWT::encode($token, config('cub.secret_key'));
 
-        $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
+        $actual = $this->get('restricted?cub_token='.$jwt);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_expired_token_header()
+    public function request_with_expired_token_header()
     {
         $expected = [
             'code' => 401,
@@ -86,16 +86,16 @@ class CubAuthFilterTest extends CubLaravelTestCase
             'exp' => time() - 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
+        $jwt = JWT::encode($token, config('cub.secret_key'));
 
-        $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
+        $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_token_not_yet_valid()
+    public function request_with_token_not_yet_valid()
     {
         $expected = [
             'code' => 401,
@@ -106,16 +106,16 @@ class CubAuthFilterTest extends CubLaravelTestCase
             'nbf' => time() + 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
+        $jwt = JWT::encode($token, config('cub.secret_key'));
 
-        $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
+        $actual = $this->get('restricted?cub_token='.$jwt);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_token_not_yet_valid_header()
+    public function request_with_token_not_yet_valid_header()
     {
         $expected = [
             'code' => 401,
@@ -126,16 +126,16 @@ class CubAuthFilterTest extends CubLaravelTestCase
             'nbf' => time() + 5000,
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
+        $jwt = JWT::encode($token, config('cub.secret_key'));
 
-        $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
+        $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_non_existent_user()
+    public function request_with_non_existent_user()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -147,16 +147,16 @@ class CubAuthFilterTest extends CubLaravelTestCase
         $token = [
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
+        $jwt = JWT::encode($token, config('cub.secret_key'));
 
-        $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
+        $actual = $this->get('restricted?cub_token='.$jwt);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_non_existent_user_header()
+    public function request_with_non_existent_user_header()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -168,16 +168,16 @@ class CubAuthFilterTest extends CubLaravelTestCase
         $token = [
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
+        $jwt = JWT::encode($token, config('cub.secret_key'));
 
-        $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
+        $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_bad_token()
+    public function request_with_bad_token()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -191,14 +191,14 @@ class CubAuthFilterTest extends CubLaravelTestCase
         ];
         $jwt = JWT::encode($token, 'giveme500!');
 
-        $actual = $this->call('GET', 'restricted', ['cub_token' => $jwt]);
+        $actual = $this->get('restricted?cub_token='.$jwt);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());
     }
 
     /** @test */
-    public function filter_with_bad_token_header()
+    public function request_with_bad_token_header()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -212,7 +212,7 @@ class CubAuthFilterTest extends CubLaravelTestCase
         ];
         $jwt = JWT::encode($token, 'giveme500!');
 
-        $actual = $this->call('GET', 'restricted', [], [], ['HTTP_Authorization' => 'Bearer '.$jwt]);
+        $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
         $this->assertEquals($expected['code'], $actual->getStatusCode());
         $this->assertEquals($expected['content'], $actual->getContent());

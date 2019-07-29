@@ -48,7 +48,7 @@ class CubObjectTransformer implements CubTransformer
     {
         $this->cubObject = $cubObject;
         $this->setObjectType($this->cubObject);
-        $this->model = app()->make(Config::get('cub::config.maps.'.$this->objectType.'.model'));
+        $this->model = app()->make(config('cub.maps.'.$this->objectType.'.model'));
         $this->fields = $this->getFields($this->objectType);
         $this->relations = $this->getRelations($this->objectType);
     }
@@ -68,7 +68,7 @@ class CubObjectTransformer implements CubTransformer
      */
     protected function getFields($objectType)
     {
-        return Config::get('cub::config.maps.'.$objectType.'.fields') ? : [];
+        return config('cub.maps.'.$objectType.'.fields') ? : [];
     }
 
     /**
@@ -78,7 +78,7 @@ class CubObjectTransformer implements CubTransformer
      */
     protected function getRelations($objectType)
     {
-        return Config::get('cub::config.maps.'.$objectType.'.relations') ? : [];
+        return config('cub.maps.'.$objectType.'.relations') ? : [];
     }
 
     /**
