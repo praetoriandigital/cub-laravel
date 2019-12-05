@@ -24,7 +24,6 @@
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="CUB_PUBLIC" value="cubbie"/>
-        <env name="CUB_SECRET" value="sk_23a00c357cb44c358"/>
         <env name="CUB_API_URL" value="https://id.lexipol.com/v1/"/>
         <env name="CUB_WEBHOOK_URL" value="webhooks/cub"/>
     </php>
