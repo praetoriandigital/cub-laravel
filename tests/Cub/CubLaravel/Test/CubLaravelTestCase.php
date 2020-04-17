@@ -36,9 +36,10 @@ abstract class CubLaravelTestCase extends TestCase
     }
 
     /**
+     * @param $app
      * @return array
      */
-    protected function getPackageProviders()
+    protected function getPackageProviders($app)
     {
         return ['Cub\CubLaravel\ServiceProvider'];
     }

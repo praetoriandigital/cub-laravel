@@ -15,6 +15,7 @@ use Cub_NotFound;
 use Cub_Object;
 use Cub_User;
 use Firebase\JWT\JWT;
+use Firebase\JWT\SignatureInvalidException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -233,6 +234,10 @@ class Cub
         }
 
         $decoded = (array) JWT::decode($token, config('cub.secret_key'), [self::ALGO]);
+
+        if (isset($decoded['scope'])) {
+            throw new SignatureInvalidException('JWT scope claim can not be present.');
+        }
 
         $this->setCurrent($this->getUserById($decoded[self::CUB_ID_KEY]), $token);
 
