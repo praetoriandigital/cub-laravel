@@ -188,7 +188,7 @@ class CubAuthFilterTest extends CubLaravelTestCase
             'user' => $this->details['id'],
             'scope' => 'fail',
         ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -208,7 +208,7 @@ class CubAuthFilterTest extends CubLaravelTestCase
             'user' => $this->details['id'],
             'scope' => 'wat',
         ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        $jwt = JWT::encode($token, $this->app['config']->get('cub::config.secret_key'));
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
