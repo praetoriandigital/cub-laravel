@@ -1,13 +1,16 @@
 language: php
-
 php:
-  - 5.5
-  - 5.6
-  - 7.0
-  - 7.1
-
+- 7.0
+- 7.1
+- 7.2
 before_script:
-  - travis_retry composer self-update
-  - travis_retry composer install --prefer-source --no-interaction --dev
-
+- travis_retry composer self-update
+- COMPOSER_MEMORY_LIMIT=-1 travis_retry composer install --prefer-dist --no-interaction
 script: composer test
+env:
+  global:
+    secure: S1rtThfPmyNIeC5T6ACtHxsocHpfsS1yhXWhAgAKujhs0bwG7TzSCqq9FwNFQAGdVX5LCcgRmt9WL5lJTdJU1NumHc13qzGvT3HEpq1V7HyHfsBvnOtEkgS4LHh61lm0blBLTAmIzOO0A3BJdVtV6GXdf0hXufB8Qbxl8oWn739i6IFXaSXgBguaLI3nYhgihUvi6eTLnxOIZ1ro1grjBrDrPbNfNnw/EFAm8+/18Vngv9hXT6dAw5rfaDLu0mhw6pmEnRIrT3VaJI2LIy/1LLyxYRfiVra2HiAVj8vZ1S6zYZO9tyAUqo4CswWlq84gqEHzbvUPpv7GdRWRK7PMPe8FWPiSz6uuk3pwtotpr+6bIj6qS639jLV9JvZXqRkBkdcTBH5o8pVnHp1/+85YM192ekBiVaVi5WnSZXvy958CG1lv8qy1UQZ7RNVZyoQAeucYe1blHARmWWiIB+Bmn1pt5aleqYSYuYGDMtiMK+DfB4iiATAGSPZnBg4d6P5WS1tPrJttMlKIhtO66/RBXha7oYdX/p6KAN+8CWjVu9uyMd22uR6kUpXyRuvSuhmpQy11uxzDBuU+cYT6RzAcEjVEsvN+l+xiDAAJhNTko11ErTrJmUrKfkJwUD1nX3jaoBqSh9SzINEs/OQJKhDcw5MkYwIXHnLOK2AX5Gqn2VQ=
+notifications:
+  slack:
+    rooms:
+      secure: hh8u8ssRM8xsCTneAfsyuEPBswWr2ni2tKvTvluL76bvDUmrJ5ZL20xlB99g7/B4ulSBGgr4Qud9Z8oh7bgkm3S7sOnjoTFzTR3450dlWptLuX6idYQK4byNwOCdLVbi6vrkByxD7j7jxwApqCI1I2DKDfG7WffW1zvUxiKIbbaefTsLXbtRFbx23Dpyc7QoJBLsJIC6J6DBaX43e1q8G4tDOVSCS63vjRtOgbO44At9FS9ObiziEBuoQ/ACGec3UK2AMpA0pS+/8VmBB8KpePKvLjcP4Fwh6loWqpSIvMshbgKwbPq4ZBpgZEUFOpgDDFWv43I2NaURdho8OHByJbeMXMAJPIydAPwstiBkM+MTMWa5fD2L/1rc9JGo25Ik5IOHK9+Q3YHFZx8f8Ej7E3tsZaj+I+oEp/oS3ej2gKT0DadszJqWhDxvGdLQVx0r3ZUnvlimvDLcTypVbRN6POY3fYQ872pHx59iE/WlQt2TzTPde9b5GXK9wctKP9ILJUEzJioEdz3WrxEPi4449Is1quW7dgD1VNBLlFXAjnn9U3wYD9n62o45ZfoES47nsSCN4Dr3pOmGCGRk+f3PMulbvFiwqKnP3Qq2tErhKQRqKfdL6/UROhKO4DkWt21KoAjPg1cFLmr6dck5nvO/H/xFpwamOvbJXcNVBbBmTKE=

@@ -17,6 +17,7 @@ use Cub_User;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class Cub
 {
@@ -234,6 +235,10 @@ class Cub
 
         $decoded = (array) JWT::decode($token, Config::get('cub::config.secret_key'), [self::ALGO]);
 
+        if (isset($decoded['scope'])) {
+            throw new InvalidArgumentException('JWT scope claim can not be present.');
+        }
+
         $this->setCurrent($this->getUserById($decoded[self::CUB_ID_KEY]), $token);
 
         return $this->currentUser();
@@ -254,6 +259,10 @@ class Cub
 
         try {
             $decoded = (array) JWT::decode($jwt, Config::get('cub::config.secret_key'), [self::ALGO]);
+
+            if (isset($decoded['scope'])) {
+                throw new InvalidArgumentException('JWT scope claim can not be present.');
+            }
         } catch (\Exception $e) {
             return false;
         }

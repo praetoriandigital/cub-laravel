@@ -177,6 +177,46 @@ class CubAuthFilterTest extends CubLaravelTestCase
     }
 
     /** @test */
+    public function request_with_token_with_scope_claim()
+    {
+        $expected = [
+            'code' => 401,
+            'content' => json_encode(['error' => 'invalid_token']),
+        ];
+
+        $token = [
+            'user' => $this->details['id'],
+            'scope' => 'fail',
+        ];
+        $jwt = JWT::encode($token, config('cub.secret_key'));
+
+        $actual = $this->get('restricted?cub_token='.$jwt);
+
+        $this->assertEquals($expected['code'], $actual->getStatusCode());
+        $this->assertEquals($expected['content'], $actual->getContent());
+    }
+
+    /** @test */
+    public function request_with_token_with_scope_claim_header()
+    {
+        $expected = [
+            'code' => 401,
+            'content' => json_encode(['error' => 'invalid_token']),
+        ];
+
+        $token = [
+            'user' => $this->details['id'],
+            'scope' => 'wat',
+        ];
+        $jwt = JWT::encode($token, config('cub.secret_key'));
+
+        $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
+
+        $this->assertEquals($expected['code'], $actual->getStatusCode());
+        $this->assertEquals($expected['content'], $actual->getContent());
+    }
+
+    /** @test */
     public function filter_with_bad_token()
     {
         User::whereCubId($this->details['id'])->first()->delete();
