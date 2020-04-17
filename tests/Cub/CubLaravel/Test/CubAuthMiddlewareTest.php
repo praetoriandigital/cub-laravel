@@ -182,8 +182,8 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
         User::whereCubId($this->details['id'])->first()->delete();
 
         $expected = [
-            'code' => 500,
-            'content' => json_encode(['error' => 'error_processing_token']),
+            'code' => 401,
+            'content' => json_encode(['error' => 'invalid_token']),
         ];
 
         $token = [
@@ -203,8 +203,8 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
         User::whereCubId($this->details['id'])->first()->delete();
 
         $expected = [
-            'code' => 500,
-            'content' => json_encode(['error' => 'error_processing_token']),
+            'code' => 401,
+            'content' => json_encode(['error' => 'invalid_token']),
         ];
 
         $token = [

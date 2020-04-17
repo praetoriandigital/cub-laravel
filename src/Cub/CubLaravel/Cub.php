@@ -1,9 +1,7 @@
 <?php namespace Cub\CubLaravel;
 
-use Carbon\Carbon;
 use Config;
 use Cub\CubLaravel\Contracts\CubGateway;
-use Cub\CubLaravel\Contracts\CubTransformer;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Handlers\Transformers\CubTransformHandler;
@@ -15,9 +13,9 @@ use Cub_NotFound;
 use Cub_Object;
 use Cub_User;
 use Firebase\JWT\JWT;
-use Firebase\JWT\SignatureInvalidException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class Cub
 {
@@ -226,6 +224,7 @@ class Cub
      * @param null $token
      *
      * @return \Illuminate\Database\Eloquent\Model
+     * @throws NoJWTOnRequestException
      */
     public function getUserByJWT($token = null)
     {
@@ -236,7 +235,7 @@ class Cub
         $decoded = (array) JWT::decode($token, config('cub.secret_key'), [self::ALGO]);
 
         if (isset($decoded['scope'])) {
-            throw new SignatureInvalidException('JWT scope claim can not be present.');
+            throw new InvalidArgumentException('JWT scope claim can not be present.');
         }
 
         $this->setCurrent($this->getUserById($decoded[self::CUB_ID_KEY]), $token);
@@ -259,6 +258,10 @@ class Cub
 
         try {
             $decoded = (array) JWT::decode($jwt, config('cub.secret_key'), [self::ALGO]);
+
+            if (isset($decoded['scope'])) {
+                throw new InvalidArgumentException('JWT scope claim can not be present.');
+            }
         } catch (\Exception $e) {
             return false;
         }

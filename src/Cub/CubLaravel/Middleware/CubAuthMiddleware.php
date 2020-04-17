@@ -7,8 +7,7 @@ use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Traits\RespondTrait;
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
-use Firebase\JWT\SignatureInvalidException;
-use Response;
+use InvalidArgumentException;
 
 class CubAuthMiddleware
 {
@@ -48,7 +47,7 @@ class CubAuthMiddleware
             $this->cub->getUserByJWT($token);
         } catch (ObjectNotFoundByCubIdException $e) {
             return $this->respondJSON('user_not_found', 404);
-        } catch (SignatureInvalidException $e) {
+        } catch (InvalidArgumentException $e) {
             return $this->respondJSON('invalid_token', 401);
         } catch (ExpiredException $e) {
             return $this->respondJSON('expired_token', 401);
