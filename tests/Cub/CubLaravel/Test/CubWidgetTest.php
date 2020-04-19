@@ -8,15 +8,15 @@ class CubWidgetTest extends CubLaravelTestCase
     function header_script_returns_script()
     {
         $expected = '<script>'
-                  . '(function(){'
-                  . 'if (document.getElementById("cub-widget-script")) {return;}'
-                  . 'var firstScript = document.getElementsByTagName("script")[0];'
-                  . 'var cubJs = document.createElement("script");'
-                  . 'cubJs.id = "cub-widget-script";'
-                  . 'cubJs.src = "//cub-praetorian.netdna-ssl.com/cub-widget.0.18.x.js";'
-                  . 'firstScript.parentNode.insertBefore(cubJs, firstScript);'
-                  . '}());'
-                  . '</script>';
+            . '(function(){'
+            . 'if (document.getElementById("cub-widget-script")) {return;}'
+            . 'var firstScript = document.getElementsByTagName("script")[0];'
+            . 'var cubJs = document.createElement("script");'
+            . 'cubJs.id = "cub-widget-script";'
+            . 'cubJs.src = "//lid.cdn.lexipol.com/cub-widget.0.28.x.js";'
+            . 'firstScript.parentNode.insertBefore(cubJs, firstScript);'
+            . '}());'
+            . '</script>';
 
         $this->assertEquals(CubWidget::headerScript(), $expected);
     }
