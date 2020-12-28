@@ -127,7 +127,7 @@ abstract class CubLaravelTestCase extends TestCase
     protected function getToken(array $payload = [])
     {
         return JWT::encode(array_merge([
-            Cub::CUB_ID_KEY => $this->details['id'],
+            'user' => $this->details['id'],
         ], $payload), config('cub.secret_key'));
     }
 }
