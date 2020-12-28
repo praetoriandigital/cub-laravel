@@ -32,7 +32,7 @@ abstract class CubLaravelTestCase extends TestCase
         ];
 
         $this->app->bind(CubGateway::class, FakeCubApiGateway::class);
-        $this->app->bind(CubLogin::class, FakeCubApiGateway::class);
+        $this->app->bind(CubLogin::class, FakeCubLogin::class);
         $this->modifyConfiguration();
         $this->prepareDatabase();
         $this->prepareRoutes();
