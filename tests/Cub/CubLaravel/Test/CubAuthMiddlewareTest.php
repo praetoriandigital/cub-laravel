@@ -14,7 +14,8 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'Hello, Cub User '.$this->details['id']]),
         ];
 
-        $jwt = $this->getToken();
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+        $jwt = $login->getToken();
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -30,7 +31,8 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'Hello, Cub User '.$this->details['id']]),
         ];
 
-        $jwt = $this->getToken();
+        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
+        $jwt = $login->getToken();
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
