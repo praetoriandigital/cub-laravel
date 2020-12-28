@@ -1,8 +1,8 @@
 <?php namespace Cub\CubLaravel\Test;
 
+use Cub;
 use Cub\CubLaravel\Contracts\CubGateway;
 use Cub\CubLaravel\Contracts\CubLogin;
-use Cub\CubLaravel\Cub;
 use Cub\CubLaravel\Middleware\CubAuthMiddleware;
 use DB;
 use Firebase\JWT\JWT;
