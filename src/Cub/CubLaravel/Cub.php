@@ -2,6 +2,7 @@
 
 use Config;
 use Cub\CubLaravel\Contracts\CubGateway;
+use Cub\CubLaravel\Contracts\CubLogin;
 use Cub\CubLaravel\Exceptions\NoJWTOnRequestException;
 use Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException;
 use Cub\CubLaravel\Handlers\Transformers\CubTransformHandler;
@@ -11,7 +12,6 @@ use Cub_Api;
 use Cub_ApiError;
 use Cub_NotFound;
 use Cub_Object;
-use Cub_User;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -26,26 +26,32 @@ class Cub
     const CUB_USER_COOKIE = 'cubUserToken';
     const CUB_ORG_COOKIE = 'cubOrganizationId';
 
-    /**
-     * @var \Illuminate\Http\Request
-     */
+    /** @var CubGateway */
+    private $cubGateway;
+
+    /** @var CubLogin */
+    private $loginService;
+
+    /** @var Request */
     protected $request;
 
-    private $currentUser = null;
+    private $currentUser;
 
-    private $currentToken = null;
+    private $currentToken;
 
-    private $currentOrganizationId = null;
+    private $currentOrganizationId;
 
     /**
      * Cub constructor.
      *
-     * @param \Cub\CubLaravel\Contracts\CubGateway $cubGateway
-     * @param \Illuminate\Http\Request $request
+     * @param CubGateway $cubGateway
+     * @param CubLogin $loginService
+     * @param Request $request
      */
-    public function __construct(CubGateway $cubGateway, Request $request)
+    public function __construct(CubGateway $cubGateway, CubLogin $loginService, Request $request)
     {
         $this->cubGateway = $cubGateway;
+        $this->loginService = $loginService;
         $this->request = $request;
     }
 
@@ -58,7 +64,7 @@ class Cub
      */
     public function login($username, $password, $setCookie = false)
     {
-        $cub_user = Cub_User::login($username, $password);
+        $cub_user = $this->loginService->login($username, $password);
         $user = $this->getUserById($cub_user->id);
 
         $this->setCurrentUser($user);

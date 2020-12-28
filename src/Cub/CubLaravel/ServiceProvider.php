@@ -1,10 +1,12 @@
 <?php namespace Cub\CubLaravel;
 
 use Cub\CubLaravel\Contracts\CubGateway;
+use Cub\CubLaravel\Contracts\CubLogin;
 use Cub\CubLaravel\Cub;
 use Cub\CubLaravel\CubWidget;
 use Cub\CubLaravel\Middleware\CubAuthMiddleware;
 use Cub\CubLaravel\Support\CubApiGateway;
+use Cub\CubLaravel\Support\LoginService;
 use Cub_Config;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -55,6 +57,7 @@ class ServiceProvider extends BaseServiceProvider
 //        });
 
         $this->app->bind(CubGateway::class, CubApiGateway::class);
+        $this->app->bind(CubLogin::class, LoginService::class);
         $this->app->bind('cub', Cub::class);
         $this->app->bind('cub-widget', CubWidget::class);
     }

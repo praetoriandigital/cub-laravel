@@ -1,4 +1,4 @@
-<?php namespace Cub\CubLaravel\Support;
+<?php namespace Cub\CubLaravel\Test;
 
 use Cub_Forbidden;
 use Cub_Member;

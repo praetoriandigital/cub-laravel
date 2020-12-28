@@ -1,9 +1,10 @@
 <?php namespace Cub\CubLaravel\Test;
 
-use Cub;
 use Cub\CubLaravel\Contracts\CubGateway;
-use Cub\CubLaravel\Support\FakeCubApiGateway;
+use Cub\CubLaravel\Contracts\CubLogin;
+use Cub\CubLaravel\Cub;
 use DB;
+use Firebase\JWT\JWT;
 use Orchestra\Testbench\TestCase;
 
 /**
@@ -30,6 +31,7 @@ abstract class CubLaravelTestCase extends TestCase
         ];
 
         $this->app->bind(CubGateway::class, FakeCubApiGateway::class);
+        $this->app->bind(CubLogin::class, FakeCubApiGateway::class);
         $this->modifyConfiguration();
         $this->prepareDatabase();
         $this->prepareRoutes();
@@ -119,5 +121,12 @@ abstract class CubLaravelTestCase extends TestCase
         app('router')->get('restricted', ['middleware' => 'cub-auth', function () {
             return response()->json(['message' => 'Hello, Cub User '.Cub::currentUser()->cub_id]);
         }]);
+    }
+
+    protected function getToken(array $payload = [])
+    {
+        return JWT::encode(array_merge([
+            Cub::CUB_ID_KEY => $this->details['id'],
+        ], $payload), config('cub.secret_key'));
     }
 }

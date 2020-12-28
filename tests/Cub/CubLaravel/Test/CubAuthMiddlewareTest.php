@@ -14,8 +14,7 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'Hello, Cub User '.$this->details['id']]),
         ];
 
-        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
-        $jwt = $login->getToken();
+        $jwt = $this->getToken();
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -31,8 +30,7 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['message' => 'Hello, Cub User '.$this->details['id']]),
         ];
 
-        $login = Cub::login($this->credentials['username'], $this->credentials['password']);
-        $jwt = $login->getToken();
+        $jwt = $this->getToken();
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
@@ -62,11 +60,9 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'expired_token']),
         ];
 
-        $token = [
+        $jwt = $this->getToken([
             'exp' => time() - 5000,
-            'user' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        ]);
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -82,11 +78,9 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'expired_token']),
         ];
 
-        $token = [
+        $jwt = $this->getToken([
             'exp' => time() - 5000,
-            'user' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        ]);
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
@@ -102,11 +96,9 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'token_not_yet_valid']),
         ];
 
-        $token = [
+        $jwt = $this->getToken([
             'nbf' => time() + 5000,
-            'user' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        ]);
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -122,11 +114,9 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'token_not_yet_valid']),
         ];
 
-        $token = [
+        $jwt = $this->getToken([
             'nbf' => time() + 5000,
-            'user' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        ]);
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
@@ -144,10 +134,7 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'user_not_found']),
         ];
 
-        $token = [
-            'user' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        $jwt = $this->getToken();
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -165,10 +152,7 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'user_not_found']),
         ];
 
-        $token = [
-            'user' => $this->details['id'],
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        $jwt = $this->getToken();
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
@@ -184,11 +168,9 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'invalid_token']),
         ];
 
-        $token = [
-            'user' => $this->details['id'],
+        $jwt = $this->getToken([
             'scope' => 'fail',
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        ]);
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -204,11 +186,9 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
             'content' => json_encode(['error' => 'invalid_token']),
         ];
 
-        $token = [
-            'user' => $this->details['id'],
+        $jwt = $this->getToken([
             'scope' => 'wat',
-        ];
-        $jwt = JWT::encode($token, config('cub.secret_key'));
+        ]);
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
