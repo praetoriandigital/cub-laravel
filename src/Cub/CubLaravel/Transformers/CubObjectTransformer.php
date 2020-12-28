@@ -176,12 +176,12 @@ class CubObjectTransformer implements CubTransformer
         if ($model) {
             $fields = $this->getFields($this->getObjectType($cubObject));
             $relations = $this->getRelations($this->getObjectType($cubObject));
-            $fillable = $model['fillable'];
+            $fillable = $model->getFillable();
             $dates = $model->getDates();
         } else {
             $fields = $this->fields;
             $relations = $this->relations;
-            $fillable = $this->model['fillable'];
+            $fillable = $this->model->getFillable();
             $dates = $this->model->getDates();
         }
 
@@ -214,10 +214,10 @@ class CubObjectTransformer implements CubTransformer
         $cubObject = $cubObject ? : $this->cubObject;
         if ($model) {
             $relations = $this->getRelations($this->getObjectType($cubObject));
-            $fillable = $model['fillable'];
+            $fillable = $model->getFillable();
         } else {
             $relations = $this->relations;
-            $fillable = $this->model['fillable'];
+            $fillable = $this->model->getFillable();
         }
 
         foreach ($relations as $cubField => $appField) {
