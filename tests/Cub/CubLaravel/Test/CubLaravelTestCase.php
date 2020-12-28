@@ -3,6 +3,7 @@
 use Cub\CubLaravel\Contracts\CubGateway;
 use Cub\CubLaravel\Contracts\CubLogin;
 use Cub\CubLaravel\Cub;
+use Cub\CubLaravel\Middleware\CubAuthMiddleware;
 use DB;
 use Firebase\JWT\JWT;
 use Orchestra\Testbench\TestCase;
@@ -116,7 +117,7 @@ abstract class CubLaravelTestCase extends TestCase
      */
     protected function prepareRoutes()
     {
-        app('router')->aliasMiddleware('cub-auth', Cub\CubLaravel\Middleware\CubAuthMiddleware::class);
+        app('router')->aliasMiddleware('cub-auth', CubAuthMiddleware::class);
 
         app('router')->get('restricted', ['middleware' => 'cub-auth', function () {
             return response()->json(['message' => 'Hello, Cub User '.Cub::currentUser()->cub_id]);
