@@ -16,7 +16,7 @@ abstract class CubLaravelTestCase extends TestCase
     public $details;
     public $credentials;
   
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

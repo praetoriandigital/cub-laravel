@@ -10,7 +10,7 @@ class CubWebhookTest extends CubLaravelTestCase
     /** @test */
     public function webhook_url_is_registered()
     {
-        $this->call('POST', config('cub.webhook_url'), [
+        $actual = $this->call('POST', config('cub.webhook_url'), [
             'object' => 'user',
             'id' => $this->details['id'],
             'first_name' => '',
@@ -20,6 +20,7 @@ class CubWebhookTest extends CubLaravelTestCase
             'last_login' => '2017-09-29T17:39:23Z',
             'deleted' => false,
         ]);
+        $this->assertEquals(200, $actual->getStatusCode());
     }
 
     /** @test */

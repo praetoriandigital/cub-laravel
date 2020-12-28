@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  php74:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: cub-laravel
+    volumes:
+      - ${PWD}:/app:rw
