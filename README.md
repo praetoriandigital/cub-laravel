@@ -710,6 +710,21 @@ return array(
 );
 ```
 
+## Development
+
+A `docker-compose.yml` file is provided for running tests locally within an already defined docker container.
+
+Run the following command to install all dependencies:
+```bash
+docker-compose run php74 composer update
+```
+
+Run the following command to run tests:
+```bash
+docker-compose run php74 vendor/bin/phpunit
+```
+
+
 [ico-version]: https://img.shields.io/packagist/v/cub/cub-laravel.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/praetoriandigital/cub-laravel/master.svg?style=flat-square

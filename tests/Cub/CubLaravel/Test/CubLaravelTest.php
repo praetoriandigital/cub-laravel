@@ -13,6 +13,22 @@ use Firebase\JWT\JWT;
 class CubLaravelTest extends CubLaravelTestCase
 {
     /** @test */
+    public function validate_returns_true_with_valid_credentials()
+    {
+        $actual = Cub::validate($this->credentials['username'], $this->credentials['password']);
+
+        $this->assertTrue($actual);
+    }
+
+    /** @test */
+    public function validate_returns_false_with_invalid_credentials()
+    {
+        $actual = Cub::validate('not_the_right_username', $this->credentials['password']);
+
+        $this->assertFalse($actual);
+    }
+
+    /** @test */
     public function application_user_is_returned_from_login()
     {
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);

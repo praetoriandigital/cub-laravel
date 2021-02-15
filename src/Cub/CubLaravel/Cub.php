@@ -12,9 +12,12 @@ use Cub_Api;
 use Cub_ApiError;
 use Cub_NotFound;
 use Cub_Object;
+use Cub_User;
+use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class Cub
@@ -53,6 +56,22 @@ class Cub
         $this->cubGateway = $cubGateway;
         $this->loginService = $loginService;
         $this->request = $request;
+    }
+
+    /**
+     * @param $username
+     * @param $password
+     *
+     * @return bool
+     */
+    public function validate($username, $password)
+    {
+        try {
+            $cub_user = $this->loginService->login($username, $password);
+            return $cub_user instanceof Cub_User;
+        } catch (Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -111,9 +130,15 @@ class Cub
      *
      * @return void
      */
-    private function setCurrentUser(Model $user = null)
+    public function setCurrentUser(Model $user = null)
     {
-        $this->currentUser = $user;
+        $userModel = config('cub.maps.user.model');
+        if ($user !== null && $user instanceof $userModel) {
+            $this->currentUser = $user;
+        } else {
+            $this->currentUser = null;
+        }
+
     }
 
     /**
@@ -124,6 +149,16 @@ class Cub
     private function setCurrentToken($token = null)
     {
         $this->currentToken = $token;
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return void
+     */
+    public function setCurrentRequest(Request $request)
+    {
+        $this->request = $request;
     }
 
     /**
@@ -297,19 +332,19 @@ class Cub
     /**
      * Parse token from the authorization header
      *
-     * @param string  $header
-     * @param string  $method
+     * @param string $header
+     * @param string $method
      * @return false|string
      */
     protected function parseAuthHeader($header = 'authorization', $method = 'bearer')
     {
-        $header = $this->request->headers->get($header);
+        $authorization = $this->request->headers->get($header);
 
-        if (!starts_with(strtolower($header), $method)) {
+        if (!Str::startsWith(strtolower($authorization), $method)) {
             return false;
         }
 
-        return trim(str_ireplace($method, '', $header));
+        return trim(str_ireplace($method, '', $authorization));
     }
 
     /**
