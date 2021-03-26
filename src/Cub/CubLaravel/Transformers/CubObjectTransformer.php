@@ -111,6 +111,7 @@ class CubObjectTransformer implements CubTransformer
                     if (!$this->appObject->fill($data)->save()) {
                         return false;
                     }
+                    $this->processHasManyRelationsData();
                 } catch (QueryException $e) {
                     try {
                         $this->setAppObject(Cub::getObjectById($this->objectType, $this->cubObject->id));
@@ -122,7 +123,8 @@ class CubObjectTransformer implements CubTransformer
 
             if ($this->needsToRestore() && !$this->appObject->restore()) {
                 return false;
-            } else if ($this->needsToDelete() && !$this->appObject->delete()) {
+            }
+            if ($this->needsToDelete() && !$this->appObject->delete()) {
                 return false;
             }
 
@@ -175,17 +177,15 @@ class CubObjectTransformer implements CubTransformer
         $cubObject = $cubObject ? : $this->cubObject;
         if ($model) {
             $fields = $this->getFields($this->getObjectType($cubObject));
-            $relations = $this->getRelations($this->getObjectType($cubObject));
             $fillable = $model->getFillable();
             $dates = $model->getDates();
         } else {
             $fields = $this->fields;
-            $relations = $this->relations;
             $fillable = $this->model->getFillable();
             $dates = $this->model->getDates();
         }
 
-        $this->processRelationsData($data);
+        $this->processBelongsToRelationsData($data);
 
         foreach ($fields as $cubField => $appField) {
             if (in_array($appField, $fillable)) {
@@ -209,7 +209,7 @@ class CubObjectTransformer implements CubTransformer
      * @param Cub_Object $cubObject
      * @param Model $model
      */
-    protected function processRelationsData(array &$data, Cub_Object $cubObject = null, Model $model = null)
+    protected function processBelongsToRelationsData(array &$data, Cub_Object $cubObject = null, Model $model = null)
     {
         $cubObject = $cubObject ? : $this->cubObject;
         if ($model) {
@@ -228,17 +228,34 @@ class CubObjectTransformer implements CubTransformer
                         $data[$appField] = $appObject->id;
                     }
                 }
-            } else if (Cub::objectNameIsTracked($appField)) {
+            }
+        }
+    }
+
+    /**
+     * @param Cub_Object $cubObject
+     * @param Model $model
+     */
+    protected function processHasManyRelationsData(Cub_Object $cubObject = null, Model $model = null)
+    {
+        $cubObject = $cubObject ? : $this->cubObject;
+        if ($model) {
+            $relations = $this->getRelations($this->getObjectType($cubObject));
+        } else {
+            $relations = $this->relations;
+        }
+
+        foreach ($relations as $cubField => $appField) {
+            $value = $cubObject->{$cubField};
+            if (Cub::objectNameIsTracked($appField)) {
                 if (is_array($value)) {
                     foreach ($value as $v) {
                         if ($v instanceof Cub_Object && Cub::objectIsTracked($v)) {
                             Cub::processObject($v, false);
                         }
                     }
-                } else {
-                    if ($value instanceof Cub_Object && Cub::objectIsTracked($value)) {
-                        Cub::processObject($value, false);
-                    }
+                } else if ($value instanceof Cub_Object && Cub::objectIsTracked($value)) {
+                    Cub::processObject($value, false);
                 }
             }
         }
