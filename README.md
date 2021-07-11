@@ -716,12 +716,12 @@ A `docker-compose.yml` file is provided for running tests locally within an alre
 
 Run the following command to install all dependencies:
 ```bash
-docker-compose run php74 composer update
+docker compose run php74 composer update
 ```
 
 Run the following command to run tests:
 ```bash
-docker-compose run php74 vendor/bin/phpunit
+docker compose run php74 vendor/bin/phpunit
 ```
 
 
