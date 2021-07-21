@@ -8,110 +8,96 @@ use Cub\CubLaravel\Test\Models\Organization;
 use Cub\CubLaravel\Test\Models\State;
 use Cub\CubLaravel\Test\Models\User;
 use Cub_Object;
+use Exception;
 use Firebase\JWT\JWT;
 
 class CubLaravelTest extends CubLaravelTestCase
 {
-    /** @test */
-    public function validate_returns_true_with_valid_credentials()
+    public function testValidateReturnsTrueWithValidCredentials()
     {
         $actual = Cub::validate($this->credentials['username'], $this->credentials['password']);
 
-        $this->assertTrue($actual);
+        self::assertTrue($actual);
     }
 
-    /** @test */
-    public function validate_returns_false_with_invalid_credentials()
+    public function testValidateReturnsFalseWithInvalidCredentials()
     {
         $actual = Cub::validate('not_the_right_username', $this->credentials['password']);
 
-        $this->assertFalse($actual);
+        self::assertFalse($actual);
     }
 
-    /** @test */
-    public function application_user_is_returned_from_login()
+    public function testApplicationUserIsReturnedFromLogin()
     {
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = $login->getUser();
 
-        $this->assertInstanceOf(config('cub.maps.user.model'), $user);
-        $this->assertEquals($user->email, $this->credentials['username']);
+        self::assertInstanceOf(config('cub.maps.user.model'), $user);
+        self::assertEquals($user->email, $this->credentials['username']);
     }
 
-    /** @test */
-    public function application_user_is_returned_from_current_user()
+    public function testApplicationUserIsReturnedFromCurrentUser()
     {
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
         $user = Cub::currentUser();
 
-        $this->assertInstanceOf(config('cub.maps.user.model'), $user);
-        $this->assertEquals($login->getUser(), $user);
+        self::assertInstanceOf(config('cub.maps.user.model'), $user);
+        self::assertEquals($login->getUser(), $user);
     }
 
-    /** @test */
-    public function cub_jwt_is_returned_from_current_token()
+    public function testCubJwtIsReturnedFromCurrentToken()
     {
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
 
-        $this->assertEquals($login->getToken(), Cub::currentToken());
+        self::assertEquals($login->getToken(), Cub::currentToken());
     }
 
-    /** @test */
-    function logout_clears_current_user_and_token()
+    public function testLogoutClearsCurrentUserAndToken()
     {
         $login = Cub::login($this->credentials['username'], $this->credentials['password']);
 
-        $this->assertEquals($login->getUser(), Cub::currentUser());
-        $this->assertEquals($login->getToken(), Cub::currentToken());
+        self::assertEquals($login->getUser(), Cub::currentUser());
+        self::assertEquals($login->getToken(), Cub::currentToken());
 
         Cub::logout();
 
-        $this->assertNull(Cub::currentUser());
-        $this->assertNull(Cub::currentToken());
+        self::assertNull(Cub::currentUser());
+        self::assertNull(Cub::currentToken());
     }
 
-    /** @test */
-    function check_is_accurate()
+    public function testCheckIsAccurate()
     {
         Cub::login($this->credentials['username'], $this->credentials['password']);
 
-        $this->assertTrue(Cub::check());
+        self::assertTrue(Cub::check());
 
         Cub::logout();
 
-        $this->assertFalse(Cub::check());
+        self::assertFalse(Cub::check());
     }
 
-    /**
-     * @test
-     * @expectedException \Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException
-     */
-    public function exception_thrown_when_cub_user_is_not_application_user()
+    public function testExceptionThrownWhenCubUserIsNotApplicationUser()
     {
+        $this->expectException(ObjectNotFoundByCubIdException::class);
         User::whereCubId($this->details['id'])->first()->delete();
         Cub::login($this->credentials['username'], $this->credentials['password']);
     }
 
-    /** @test */
-    public function application_user_is_returned_from_get_user_by_id()
+    public function testApplicationUserIsReturnedFromGetUserById()
     {
         $expected = User::whereCubId($this->details['id'])->first();
         $actual = Cub::getUserById($this->details['id']);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     * @expectedException \Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException
-     */
-    public function exception_thrown_when_no_cub_user_id()
+    public function testExceptionThrownWhenNoCubUserId()
     {
+        $this->expectException(ObjectNotFoundByCubIdException::class);
         Cub::getUserById('');
     }
 
-    /** @test */
-    public function no_cub_user_id_exception_method_is_descript()
+    public function testNoCubUserIdExceptionMethodIsDescript()
     {
         $expected = 'Object not found with Cub id {empty_string}';
         $actual = '';
@@ -120,11 +106,10 @@ class CubLaravelTest extends CubLaravelTestCase
         } catch (ObjectNotFoundByCubIdException $e) {
             $actual = $e->getMessage();
         }
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    /** @test */
-    public function application_user_is_returned_from_get_user_by_jwt()
+    public function testApplicationUserIsReturnedFromGetUserByJwt()
     {
         $expected = User::whereCubId($this->details['id'])->first();
 
@@ -133,29 +118,22 @@ class CubLaravelTest extends CubLaravelTestCase
 
         $actual = Cub::getUserByJWT($jwt);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    /**
-     * @test
-     * @expectedException \Exception
-     */
-    public function exception_thrown_when_no_jwt()
+    public function testExceptionThrownWhenNoJwt()
     {
+        $this->expectException(Exception::class);
         Cub::getUserByJWT('');
     }
 
-    /**
-     * @test
-     * @expectedException \Exception
-     */
-    public function exception_thrown_when_bad_jwt()
+    public function testExceptionThrownWhenBadJwt()
     {
+        $this->expectException(Exception::class);
         Cub::getUserByJWT('kjashdkfjahkjashdfklaj');
     }
 
-    /** @test */
-    public function get_expands_is_accurate()
+    public function testGetExpandsIsAccurate()
     {
         $expected = 'organization,user,group_membership,organization__state,organization__country,group_membership__group,group_membership__member';
 
@@ -167,11 +145,10 @@ class CubLaravelTest extends CubLaravelTestCase
         ]);
         $actual = Cub::getObjectExpands($object);
 
-        $this->assertEquals($expected, $actual);
+        self::assertEquals($expected, $actual);
     }
 
-    /** @test */
-    public function process_nonnested_object()
+    public function testProcessNonnestedObject()
     {
         $memberCubId = 'mbr_jieuydijhadksj3473';
         $orgCubId = 'org_j237tausyg2hadkqwh';
@@ -187,13 +164,12 @@ class CubLaravelTest extends CubLaravelTestCase
 
         $member = Member::whereCubId($memberCubId)->first();
 
-        $this->assertEquals($result->cub_id, $member->cub_id);
-        $this->assertEquals($member->organization, $orgCubId);
-        $this->assertEquals($member->user, $userCubId);
+        self::assertEquals($result->cub_id, $member->cub_id);
+        self::assertEquals($member->organization, $orgCubId);
+        self::assertEquals($member->user, $userCubId);
     }
 
-    /** @test */
-    public function process_nested_object()
+    public function testProcessNestedObject()
     {
         $memberCubId = 'mbr_jieuydijhadksj3473';
         $orgCubId = 'org_j237tausyg2hadkqwh';
@@ -237,52 +213,47 @@ class CubLaravelTest extends CubLaravelTestCase
         $country = Country::whereCubId($countryCubId)->first();
         $state = State::whereCubId($stateCubId)->first();
 
-        $this->assertEquals($result->cub_id, $member->cub_id);
-        $this->assertNotNull($user);
-        $this->assertEquals($user->cub_id, $userCubId);
-        $this->assertNotNull($org);
-        $this->assertEquals($org->cub_id, $orgCubId);
-        $this->assertNotNull($country);
-        $this->assertEquals($country->cub_id, $countryCubId);
-        $this->assertNotNull($state);
-        $this->assertEquals($state->cub_id, $stateCubId);
+        self::assertEquals($result->cub_id, $member->cub_id);
+        self::assertNotNull($user);
+        self::assertEquals($user->cub_id, $userCubId);
+        self::assertNotNull($org);
+        self::assertEquals($org->cub_id, $orgCubId);
+        self::assertNotNull($country);
+        self::assertEquals($country->cub_id, $countryCubId);
+        self::assertNotNull($state);
+        self::assertEquals($state->cub_id, $stateCubId);
     }
 
-    /** @test */
-    function current_organization_with_no_current_org_id_returns_null()
+    public function testCurrentOrganizationWithNoCurrentOrgIdReturnsNull()
     {
         Cub::setCurrentOrganizationId(null);
-        $this->assertNull(Cub::currentOrganization());
+        self::assertNull(Cub::currentOrganization());
     }
 
     /** @test */
-    function current_organization_with_erroneous_current_org_id_returns_null()
+    public function testCurrentOrganizationWithErroneousCurrentOrgIdReturnsNull()
     {
         Cub::setCurrentOrganizationId('kajhsdkfahdk');
-        $this->assertNull(Cub::currentOrganization());
+        self::assertNull(Cub::currentOrganization());
     }
 
-    /** 
-     * @test
-     * @expectedException \Cub\CubLaravel\Exceptions\ObjectNotFoundByCubIdException
-    */
-    function current_organization_with_erroneous_current_org_id_throws_error()
+    public function testCurrentOrganizationWithErroneousCurrentOrgIdThrowsError()
     {
+        $this->expectException(ObjectNotFoundByCubIdException::class);
         Cub::setCurrentOrganizationId('org_kajhsdkfahdk');
-        $this->assertNull(Cub::currentOrganization());
+        self::assertNull(Cub::currentOrganization());
     }
 
-    /** @test */
-    function current_organization_with_accurate_cookie_returns_organization()
+    public function testCurrentOrganizationWithAccurateCookieReturnsOrganization()
     {
         $organization = Organization::create([
             'cub_id' => 'org_jhakjhwsfdgdssk4esjkjahs',
             'name' => 'Foo',
         ]);
 
-        $this->assertNull(Cub::currentOrganization());
+        self::assertNull(Cub::currentOrganization());
 
         Cub::setCurrentOrganizationId($organization->cub_id);
-        $this->assertEquals(Cub::currentOrganization()->cub_id, $organization->cub_id);
+        self::assertEquals(Cub::currentOrganization()->cub_id, $organization->cub_id);
     }
 }

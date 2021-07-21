@@ -4,8 +4,7 @@ use CubWidget;
 
 class CubWidgetTest extends CubLaravelTestCase
 {
-    /** @test */
-    function header_script_returns_script()
+    public function testHeaderScriptReturnsScript()
     {
         $expected = '<script>'
             . '(function(){'
@@ -18,11 +17,10 @@ class CubWidgetTest extends CubLaravelTestCase
             . '}());'
             . '</script>';
 
-        $this->assertEquals(CubWidget::headerScript(), $expected);
+        self::assertEquals($expected, CubWidget::headerScript());
     }
 
-    /** @test */
-    function footer_script_returns_script()
+    public function testFooterScriptReturnsScript()
     {
         $expected = '<script>'
                   . 'var cubAsyncInit = function(cub) {'
@@ -32,18 +30,16 @@ class CubWidgetTest extends CubLaravelTestCase
                   . '};'
                   . '</script>';
 
-        $this->assertEquals(CubWidget::footerScript(), $expected);
+        self::assertEquals($expected, CubWidget::footerScript());
     }
 
-    /** @test */
-    function menu_returns_menu_div()
+    public function testMenuReturnsMenuDiv()
     {
-        $this->assertEquals(CubWidget::menu(), '<div id="cub-widget-menu"></div>');
+        self::assertEquals('<div id="cub-widget-menu"></div>', CubWidget::menu());
     }
 
-    /** @test */
-    function app_returns_app_div()
+    public function testAppReturnsAppDiv()
     {
-        $this->assertEquals(CubWidget::app(), '<div id="cub-widget-app"></div>');
+        self::assertEquals('<div id="cub-widget-app"></div>', CubWidget::app());
     }
 }

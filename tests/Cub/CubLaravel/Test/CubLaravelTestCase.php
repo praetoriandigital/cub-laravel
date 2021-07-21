@@ -42,9 +42,11 @@ abstract class CubLaravelTestCase extends TestCase
      * @param $app
      * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
-        return ['Cub\CubLaravel\ServiceProvider'];
+        return [
+            'Cub\CubLaravel\ServiceProvider'
+        ];
     }
 
     /**
@@ -100,12 +102,12 @@ abstract class CubLaravelTestCase extends TestCase
         $this->artisan('migrate', [
             '--database' => 'testbench',
             '--path'     => '../tests/Cub/CubLaravel/Test/migrations',
-        ]);
+        ])->run();
 
         $this->artisan('migrate', [
             '--database' => 'testbench',
             '--path'     => '/migrations',
-        ]);
+        ])->run();
 
         // Update our user to have a correct cub_id
         DB::table('users')->where('id', 1)->update(['cub_id' => $this->details['id']]);

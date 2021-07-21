@@ -6,8 +6,7 @@ use Firebase\JWT\JWT;
 
 class CubAuthMiddlewareTest extends CubLaravelTestCase
 {
-    /** @test */
-    public function request_with_valid_token()
+    public function testRequestWithValidToken()
     {
         $expected = [
             'code' => 200,
@@ -19,12 +18,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_valid_token_header()
+    public function testRequestWithValidTokenHeader()
     {
         $expected = [
             'code' => 200,
@@ -36,12 +34,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_needs_token()
+    public function testRequestNeedsToken()
     {
         $expected = [
             'code' => 400,
@@ -50,12 +47,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted');
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_expired_token()
+    public function testRequestWithExpiredToken()
     {
         $expected = [
             'code' => 401,
@@ -68,12 +64,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_expired_token_header()
+    public function testRequestWithExpiredTokenHeader()
     {
         $expected = [
             'code' => 401,
@@ -86,12 +81,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_token_not_yet_valid()
+    public function testRequestWithTokenNotYetValid()
     {
         $expected = [
             'code' => 401,
@@ -104,12 +98,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_token_not_yet_valid_header()
+    public function testRequestWithTokenNotYetValidHeader()
     {
         $expected = [
             'code' => 401,
@@ -122,12 +115,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_non_existent_user()
+    public function testRequestWithNonExistentUser()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -140,12 +132,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_non_existent_user_header()
+    public function testRequestWithNonExistentUserHeader()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -158,12 +149,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_token_with_scope_claim()
+    public function testRequestWithTokenWithScopeClaim()
     {
         $expected = [
             'code' => 401,
@@ -176,12 +166,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_token_with_scope_claim_header()
+    public function testRequestWithTokenWithScopeClaimHeader()
     {
         $expected = [
             'code' => 401,
@@ -194,12 +183,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_bad_token()
+    public function testRequestWithBadToken()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -215,12 +203,11 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 
-    /** @test */
-    public function request_with_bad_token_header()
+    public function testRequestWithBadTokenHeader()
     {
         User::whereCubId($this->details['id'])->first()->delete();
 
@@ -236,7 +223,7 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 
-        $this->assertEquals($expected['code'], $actual->getStatusCode());
-        $this->assertEquals($expected['content'], $actual->getContent());
+        self::assertEquals($expected['code'], $actual->getStatusCode());
+        self::assertEquals($expected['content'], $actual->getContent());
     }
 }
