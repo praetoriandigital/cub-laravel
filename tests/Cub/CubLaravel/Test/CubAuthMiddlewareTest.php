@@ -199,7 +199,7 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
         $token = [
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, 'giveme500!');
+        $jwt = JWT::encode($token, 'giveme500!', 'HS256');
 
         $actual = $this->get('restricted?cub_token='.$jwt);
 
@@ -219,7 +219,7 @@ class CubAuthMiddlewareTest extends CubLaravelTestCase
         $token = [
             'user' => $this->details['id'],
         ];
-        $jwt = JWT::encode($token, 'giveme500!');
+        $jwt = JWT::encode($token, 'giveme500!', 'HS256');
 
         $actual = $this->get('restricted', ['HTTP_Authorization' => 'Bearer '.$jwt]);
 

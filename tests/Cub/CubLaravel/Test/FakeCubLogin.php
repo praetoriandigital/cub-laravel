@@ -24,7 +24,7 @@ class FakeCubLogin implements CubLogin
             'id' => 'usr_upfrcJvCTyXCVBj8',
             'token' => JWT::encode([
                 'user' => 'usr_upfrcJvCTyXCVBj8',
-            ], config('cub.secret_key')),
+            ], config('cub.secret_key'), 'HS256'),
         ]);
     }
 }
