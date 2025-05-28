@@ -15,6 +15,7 @@ use Cub_Object;
 use Cub_User;
 use Exception;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -273,7 +274,10 @@ class Cub
             $token = $this->getRequestJWT();
         }
 
-        $decoded = (array) JWT::decode($token, config('cub.secret_key'), [self::ALGO]);
+        $decoded = (array) JWT::decode(
+            $token,
+            new Key(config('cub.secret_key'), self::ALGO)
+        );
 
         if (isset($decoded['scope'])) {
             throw new InvalidArgumentException('JWT scope claim can not be present.');
@@ -298,7 +302,10 @@ class Cub
         }
 
         try {
-            $decoded = (array) JWT::decode($jwt, config('cub.secret_key'), [self::ALGO]);
+            $decoded = (array) JWT::decode(
+                $jwt,
+                new Key(config('cub.secret_key'), self::ALGO)
+            );
 
             if (isset($decoded['scope'])) {
                 throw new InvalidArgumentException('JWT scope claim can not be present.');
@@ -384,7 +391,7 @@ class Cub
      */
     private function setCubUserCookie($token)
     {
-        JWT::decode($token, config('cub.secret_key'), [self::ALGO]);
+        JWT::decode($token, new Key(config('cub.secret_key'), self::ALGO));
 
         if (!headers_sent() && (!isset($_COOKIE[self::CUB_USER_COOKIE]) || $_COOKIE[self::CUB_USER_COOKIE] != $token)) {
             unset($_COOKIE[self::CUB_USER_COOKIE]);

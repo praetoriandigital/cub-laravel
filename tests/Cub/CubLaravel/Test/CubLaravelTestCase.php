@@ -130,6 +130,6 @@ abstract class CubLaravelTestCase extends TestCase
     {
         return JWT::encode(array_merge([
             'user' => $this->details['id'],
-        ], $payload), config('cub.secret_key'));
+        ], $payload), config('cub.secret_key'), 'HS256');
     }
 }
