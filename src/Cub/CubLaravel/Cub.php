@@ -89,7 +89,7 @@ class Cub
 
         $this->setCurrentUser($user);
         $this->setCurrentToken($cub_user->token);
-        
+
         if ($setCookie) {
             $this->setCubUserCookie($cub_user->token);
         }
@@ -112,7 +112,7 @@ class Cub
     public function check()
     {
         return (bool) $this->currentUser();
-    }    
+    }
 
     /**
      * @param \Illuminate\Database\Eloquent\Model|null $user
@@ -255,7 +255,7 @@ class Cub
         } else {
             $object = app()->make(config('cub.maps.'.$objectType.'.model'))->whereCubId($cubId)->first();
         }
-        
+
         if (!$object) {
             throw new ObjectNotFoundByCubIdException($cubId);
         }
@@ -347,7 +347,11 @@ class Cub
     {
         $authorization = $this->request->headers->get($header);
 
-        if (!Str::startsWith(strtolower($authorization), $method)) {
+        if (is_null($authorization)) {
+            return false;
+        }
+
+        if (! Str::startsWith(strtolower($authorization), $method)) {
             return false;
         }
 
@@ -359,7 +363,7 @@ class Cub
      *
      * @return false|string
      */
-    protected function getCubUserCookie() 
+    protected function getCubUserCookie()
     {
         if (!isset($_COOKIE[self::CUB_USER_COOKIE]) || $_COOKIE[self::CUB_USER_COOKIE] == '') {
             return false;
@@ -373,7 +377,7 @@ class Cub
      *
      * @return false|string
      */
-    protected function getCubOrgCookie() 
+    protected function getCubOrgCookie()
     {
         if (!isset($_COOKIE[self::CUB_ORG_COOKIE]) || $_COOKIE[self::CUB_ORG_COOKIE] == '') {
             return false;
@@ -563,7 +567,7 @@ class Cub
 
         return null;
     }
-    
+
     /**
      * @param \Illuminate\Database\Eloquent\Model $appObject
      * @param array $params
