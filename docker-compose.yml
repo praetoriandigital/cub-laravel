@@ -1,9 +1,14 @@
-version: "3.7"
 services:
-  php74:
+  php:
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
     image: cub-laravel
+    working_dir: /app
     volumes:
-      - ${PWD}:/app:rw
+      - ./:/app:rw
+    stdin_open: true
+    tty: true
